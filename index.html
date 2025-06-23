@@ -133,17 +133,15 @@
                 value="Watch the dot draw the words and relax. Slow Reader by James.Mulvale@gmail.com" />
             <button id="startBtn" disabled>Start</button>
             <button id="shareBtn">Share</button>
-
             <div class="control-group">
                 <label>Speed:</label>
-                <input type="range" id="lpmSlider" min="0" max="10" value="5" />
+                <input type="range" id="lpmSlider" min="0" max="10" value="4" />
                 <span id="lpmValue">16 LPM</span>
             </div>
-
             <div class="control-group">
                 <label>Scale:</label>
-                <input type="range" id="zoomSlider" min="0.5" max="2.5" step="0.1" value="1" />
-                <span id="zoomValue">200px</span>
+                <input type="range" id="zoomSlider" min="0.5" max="2.5" step="0.1" value="1.25" />
+                <span id="zoomValue">250px</span>
             </div>
             <div class="control-group">
                 <label>Font:</label>
@@ -230,11 +228,16 @@
                 <input type="range" id="flickerSlider" min="0" max="10" step="1" value="0" />
                 <span id="flickerValue">0%</span>
             </div>
-
             <div class="control-group">
                 <label>Spacing:</label>
                 <input type="range" id="lineSpacingSlider" min="0" max="10" step="1" value="5" />
                 <span id="lineSpacingValue">300px</span>
+            </div>
+
+            <div class="control-group">
+                <label>Letter Gap:</label>
+                <input type="range" id="letterSpacingSlider" min="0" max="10" step="1" value="5" />
+                <span id="letterSpacingValue">1.0x</span>
             </div>
 
             <div class="control-group">
@@ -257,14 +260,13 @@
     </div>
     <canvas id="canvas"></canvas>
     <script>
-        let canvas, ctx, font;
-        let baseFontSize = 200, fontSize = 200, baselineY;
+        let canvas, ctx, font; let baseFontSize = 200, fontSize = 200, baselineY;
         const margin = 50;
         let lettersPerMinute = 16;
         let letterData = [];
         let scrollOffset = 0;
-        let currentLine = 0;
-        let lineHeight = 300;
+        let currentLine = 0; let lineHeight = 300;
+        let letterSpacing = 1.0; // Letter spacing multiplier
         let zoomFactor = 1; let isAnimating = false;
         let lineOffMode = false;
         let trailLength = 0;
@@ -317,8 +319,8 @@
             document.getElementById('jitterShape').addEventListener('change', updateJitterShape);
             document.getElementById('zoomSlider').addEventListener('input', updateZoom);
             document.getElementById('fontSelect').addEventListener('change', changeFont); document.getElementById('colorMode').addEventListener('change', toggleColorMode); document.getElementById('glowSlider').addEventListener('input', updateGlow);
-            document.getElementById('flickerSlider').addEventListener('input', updateFlicker);
-            document.getElementById('lineSpacingSlider').addEventListener('input', updateLineSpacing);
+            document.getElementById('flickerSlider').addEventListener('input', updateFlicker); document.getElementById('lineSpacingSlider').addEventListener('input', updateLineSpacing);
+            document.getElementById('letterSpacingSlider').addEventListener('input', updateLetterSpacing);
             document.getElementById('backgroundMode').addEventListener('change', updateBackgroundMode);
             document.getElementById('backgroundColor').addEventListener('input', updateBackgroundColor);
             document.getElementById('gradientColor').addEventListener('input', updateBackgroundColor);
@@ -326,8 +328,8 @@
             updateZoom();
             updateDotSize();
             updateGlow();
-            updateFlicker();
-            updateLineSpacing();
+            updateFlicker(); updateLineSpacing();
+            updateLetterSpacing();
             updateBackgroundMode();
             setupAdvancedSliderInteraction(); // Setup advanced slider interaction for all sliders
         }
@@ -426,6 +428,19 @@
             // Calculate line height based on font size and spacing multiplier
             lineHeight = fontSize * (baseSpacing / 300); // 300 is the default
             document.getElementById('lineSpacingValue').textContent = Math.round(lineHeight) + 'px';
+
+            // If we have text loaded, regenerate the paths with new spacing
+            if (letterData.length > 0) {
+                regenerateLetterPaths();
+            }
+        }
+
+        function updateLetterSpacing() {
+            const sliderValue = parseInt(document.getElementById('letterSpacingSlider').value);
+            // Linear scale for letter spacing: 0.5x to 2.0x
+            const spacingValues = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.4, 1.7, 2.0];
+            letterSpacing = spacingValues[sliderValue];
+            document.getElementById('letterSpacingValue').textContent = letterSpacing.toFixed(1) + 'x';
 
             // If we have text loaded, regenerate the paths with new spacing
             if (letterData.length > 0) {
@@ -634,9 +649,7 @@
                 x: offsetX,
                 y: offsetY
             };
-        }
-
-        function updateZoom() {
+        } function updateZoom() {
             const value = document.getElementById('zoomSlider').value;
             zoomFactor = parseFloat(value);
 
@@ -646,24 +659,30 @@
 
             // Update effective font size based on zoom
             fontSize = actualFontSize;
-            lineHeight = fontSize * 1.5;
+
+            // Update line height to maintain the current line spacing setting
+            updateLineSpacing();
 
             // If we have text loaded, regenerate the paths with new size
             if (letterData.length > 0) {
                 regenerateLetterPaths();
             }
-        }
-        function regenerateLetterPaths() {
+        } function regenerateLetterPaths() {
             const text = letterData.map(letter => letter.char).join('');
             let x = margin;
             let y = baselineY;
             let currentLineNum = 0;
-            lineHeight = fontSize * 1.5; // Update line height based on new font size
+
+            // Use current line spacing setting to calculate line height
+            const currentLineSpacing = parseInt(document.getElementById('lineSpacingSlider').value);
+            const spacingValues = [100, 150, 200, 250, 300, 350, 400, 500, 600, 800, 1000];
+            const baseSpacing = spacingValues[currentLineSpacing];
+            lineHeight = fontSize * (baseSpacing / 300);
 
             for (let i = 0; i < letterData.length; i++) {
                 const ch = letterData[i].char;
                 const glyph = font.charToGlyph(ch) || font.charToGlyph(' ');
-                const w = glyph.advanceWidth * (fontSize / font.unitsPerEm);
+                const w = glyph.advanceWidth * (fontSize / font.unitsPerEm) * letterSpacing;
 
                 // Check if we need to wrap to next line
                 if (x + w > canvas.width - margin && ch !== ' ') {
@@ -678,9 +697,10 @@
                     letterData[i].pts = [];
                     letterData[i].x = x;
                     letterData[i].y = y;
-                    letterData[i].line = currentLineNum;
-                    continue;
-                } const path = glyph.getPath(x, y, fontSize);
+                    letterData[i].line = currentLineNum; continue;
+                }
+
+                const path = glyph.getPath(x, y, fontSize);
                 const pts = samplePathWithCornerDetection(path.commands);
 
                 // Create Path2D object for filled rendering
@@ -703,7 +723,9 @@
                             path2D.closePath();
                             break;
                     }
-                });                // Keep existing color but update paths and position
+                });
+
+                // Keep existing color but update paths and position
                 letterData[i].pts = pts;
                 letterData[i].path = path2D;
                 letterData[i].x = x;
@@ -714,7 +736,9 @@
 
             // Redraw the canvas with new sizes
             redrawCurrentState();
-        } function redrawCurrentState() {
+        }
+
+        function redrawCurrentState() {
             if (letterData.length === 0) return;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -811,6 +835,7 @@
                     glow: document.getElementById('glowSlider').value,
                     flicker: document.getElementById('flickerSlider').value,
                     lineSpacing: document.getElementById('lineSpacingSlider').value,
+                    letterSpacing: document.getElementById('letterSpacingSlider').value,
                     backgroundMode: document.getElementById('backgroundMode').value,
                     backgroundColor: document.getElementById('backgroundColor').value,
                     gradientColor: document.getElementById('gradientColor').value,
@@ -983,7 +1008,7 @@
                 let wordWidth = 0;
                 for (let char of word) {
                     const glyph = font.charToGlyph(char) || font.charToGlyph(' ');
-                    wordWidth += glyph.advanceWidth * (fontSize / font.unitsPerEm);
+                    wordWidth += glyph.advanceWidth * (fontSize / font.unitsPerEm) * letterSpacing;
                 }
 
                 // Check if word fits on current line
@@ -996,20 +1021,18 @@
 
                 // Add word to layout
                 layoutText += word + ' ';
-                x += wordWidth + (font.charToGlyph(' ').advanceWidth * (fontSize / font.unitsPerEm));
+                x += wordWidth + (font.charToGlyph(' ').advanceWidth * (fontSize / font.unitsPerEm) * letterSpacing);
             }
 
             // Now create letter data with proper positioning
             x = margin;
             y = baselineY;
-            currentLine = 0;
-
-            for (let i = 0; i < layoutText.length; i++) {
+            currentLine = 0; for (let i = 0; i < layoutText.length; i++) {
                 const ch = layoutText[i];
                 if (ch === ' ' && x === margin) continue; // Skip spaces at line start
 
                 const glyph = font.charToGlyph(ch) || font.charToGlyph(' ');
-                const w = glyph.advanceWidth * (fontSize / font.unitsPerEm);
+                const w = glyph.advanceWidth * (fontSize / font.unitsPerEm) * letterSpacing;
 
                 // Check if we need to wrap (recalculate based on words)
                 if (ch === ' ') {
@@ -1022,16 +1045,17 @@
                     let nextWordWidth = 0;
                     for (let j = i + 1; j < nextWordEnd; j++) {
                         const nextGlyph = font.charToGlyph(layoutText[j]) || font.charToGlyph(' ');
-                        nextWordWidth += nextGlyph.advanceWidth * (fontSize / font.unitsPerEm);
+                        nextWordWidth += nextGlyph.advanceWidth * (fontSize / font.unitsPerEm) * letterSpacing;
                     }
 
                     if (x + nextWordWidth > canvas.width - margin) {
                         x = margin;
                         y += lineHeight;
-                        currentLine++;
-                        continue; // Skip this space
+                        currentLine++; continue; // Skip this space
                     }
-                } const path = glyph.getPath(x, y, fontSize);
+                }
+
+                const path = glyph.getPath(x, y, fontSize);
                 const pts = samplePathWithCornerDetection(path.commands);
 
                 // Create Path2D object for filled rendering
@@ -1740,6 +1764,8 @@
             const flicker = urlParams.get('flicker');
             if (flicker) document.getElementById('flickerSlider').value = flicker; const lineSpacing = urlParams.get('lineSpacing');
             if (lineSpacing) document.getElementById('lineSpacingSlider').value = lineSpacing;
+            const letterSpacing = urlParams.get('letterSpacing');
+            if (letterSpacing) document.getElementById('letterSpacingSlider').value = letterSpacing;
 
             const backgroundMode = urlParams.get('backgroundMode');
             if (backgroundMode) document.getElementById('backgroundMode').value = backgroundMode;
