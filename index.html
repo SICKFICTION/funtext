@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slow Handwriting Reveal</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Kalam:wght@400&family=Caveat:wght@400&family=Dancing+Script:wght@400&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/opentype.js@1.3.4/dist/opentype.min.js"></script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: #001111;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Patrick Hand', cursive;
+            color: #fff;
+        }
+
+        #controls {
+            padding: 12px;
+            background: #002222;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-row:first-child {
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+        }
+
+        #textInput {
+            flex: 1;
+            min-width: 200px;
+            padding: 8px;
+            font-size: 1rem;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: #003333;
+            color: #fff;
+        }
+
+        #startBtn {
+            padding: 8px 16px;
+            font-size: 1rem;
+            cursor: pointer;
+            background: #004444;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 4px;
+        }
+
+        #shareBtn {
+            padding: 8px 16px;
+            font-size: 1rem;
+            cursor: pointer;
+            background: #440044;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 4px;
+        }
+
+        #shareBtn:hover {
+            background: #660066;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .control-group label {
+            font-size: 0.85rem;
+            color: #ccc;
+            white-space: nowrap;
+        }
+
+        .control-group input[type="range"] {
+            width: 80px;
+        }
+
+        .control-group select,
+        .control-group input[type="color"] {
+            padding: 3px;
+            background: #003333;
+            color: #fff;
+            border: 1px solid #333;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .control-group span {
+            font-size: 0.8rem;
+            color: #999;
+            min-width: 50px;
+        }
+
+        .jitter-group {
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 4px 8px;
+            background: #001a1a;
+        }
+
+        #canvas {
+            flex: 1;
+            display: block;
+            background: #001111;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="controls">
+        <!-- First Row: Text Input, Start/Share buttons, and Basic Controls -->
+        <div class="control-row">
+            <input id="textInput" placeholder="Paste text here or enter a URL..."
+                value="Watch the dot draw the words and relax. Slow Reader by James.Mulvale@gmail.com" />
+            <button id="startBtn" disabled>Start</button>
+            <button id="shareBtn">Share</button>
+
+            <div class="control-group">
+                <label>Speed:</label>
+                <input type="range" id="lpmSlider" min="0" max="10" value="5" />
+                <span id="lpmValue">32 LPM</span>
+            </div>
+
+            <div class="control-group">
+                <label>Scale:</label>
+                <input type="range" id="zoomSlider" min="0.5" max="2.5" step="0.1" value="1" />
+                <span id="zoomValue">200px</span>
+            </div>
+            <div class="control-group">
+                <label>Font:</label>
+                <select id="fontSelect">
+                    <option value="Patrick Hand">Patrick Hand</option>
+                    <option value="Kalam">Kalam</option>
+                    <option value="Handlee">Handlee</option>
+                    <option value="Lobster">Lobster</option>
+                    <option value="Architects Daughter">Architects Daughter</option>
+                    <option value="Indie Flower">Indie Flower</option>
+                    <option value="Amatic SC">Amatic SC</option>
+                    <option value="Righteous">Righteous</option>
+                    <option value="Pacifico">Pacifico</option>
+                    <option value="Courgette">Courgette</option>
+                    <option value="Great Vibes">Great Vibes</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Color:</label>
+                <select id="colorMode">
+                    <option value="pastel">Pastel</option>
+                    <option value="neon">Neon</option>
+                    <option value="single">Single</option>
+                </select>
+                <input type="color" id="singleColor" value="#ff69b4" style="display:none;" />
+            </div>
+        </div>
+
+        <!-- Second Row: Jitter Controls, Drawing Settings, and Background -->
+        <div class="control-row">
+            <div class="jitter-group">
+                <div class="control-group">
+                    <label>Jitter:</label>
+                    <input type="range" id="jitterSlider" min="0" max="20" step="0.5" value="0" />
+                    <span id="jitterValue">0.0</span>
+                </div>
+                <div class="control-group">
+                    <label>Freq:</label>
+                    <input type="range" id="jitterFreqSlider" min="0" max="100" step="0.1" value="16" />
+                    <span id="jitterFreqValue">16.0</span>
+                </div>
+                <div class="control-group">
+                    <label>Shape:</label>
+                    <select id="jitterShape">
+                        <option value="sine">Sine</option>
+                        <option value="cosine">Cosine</option>
+                        <option value="triangle">Triangle</option>
+                        <option value="square">Square</option>
+                        <option value="noise">Noise</option>
+                        <option value="abs-sine">Abs-Sine</option>
+                        <option value="sawtooth">Sawtooth</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" id="lineOffMode" />
+                    Dot Only
+                </label>
+            </div>
+
+            <div class="control-group">
+                <label>Dot Size:</label>
+                <input type="range" id="dotSizeSlider" min="5" max="30" step="1" value="5" />
+                <span id="dotSizeValue">5px</span>
+            </div>
+
+            <div class="control-group">
+                <label>Trail:</label>
+                <input type="range" id="trailSlider" min="0" max="2" step="0.1" value="0" />
+                <span id="trailValue">0.0s</span>
+            </div>
+
+            <div class="control-group">
+                <label>Glow:</label>
+                <input type="range" id="glowSlider" min="0" max="10" step="1" value="4" />
+                <span id="glowValue">8</span>
+            </div>
+
+            <div class="control-group">
+                <label>Flicker:</label>
+                <input type="range" id="flickerSlider" min="0" max="10" step="1" value="0" />
+                <span id="flickerValue">0%</span>
+            </div>
+
+            <div class="control-group">
+                <label>Spacing:</label>
+                <input type="range" id="lineSpacingSlider" min="0" max="10" step="1" value="5" />
+                <span id="lineSpacingValue">300px</span>
+            </div>
+
+            <div class="control-group">
+                <label>Background:</label>
+                <select id="backgroundMode">
+                    <option value="solid">Solid</option>
+                    <option value="gradient">Gradient</option>
+                </select>
+                <input type="color" id="backgroundColor" value="#001111" />
+                <input type="color" id="gradientColor" value="#000033" style="display:none;" />
+            </div>
+
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" id="fullscreenOnStart" />
+                    Fullscreen
+                </label>
+            </div>
+        </div>
+    </div>
+    <canvas id="canvas"></canvas>
+    <script>
+        let canvas, ctx, font;
+        let baseFontSize = 200, fontSize = 200, baselineY;
+        const margin = 50;
+        let lettersPerMinute = 32;
+        let letterData = [];
+        let scrollOffset = 0;
+        let currentLine = 0;
+        let lineHeight = 300;
+        let zoomFactor = 1; let isAnimating = false;
+        let lineOffMode = false;
+        let trailLength = 0;
+        let dotSize = 5; // Dot size for drawing
+        let jitterAmount = 0;
+        let jitterFrequency = 16; // Default to 16 MPL (slider value 5)
+        let jitterShape = 'sine';
+        let trailPoints = []; // Store fading trail points        let glowIntensity = 8;        let flickerProbability = 0;
+        let backgroundMode = 'solid';
+        let backgroundColor = '#001111';
+        let gradientColor = '#000033';
+        let isEnteringFullscreen = false; // Flag to prevent onResize interference
+        let globalAnimationStartTime = null; // Global animation timer for continuous jitter
+
+        // Fine-tune offset variables for all logarithmic sliders
+        let lmpFineTuneOffset = 0;
+        let jitterFreqFineTuneOffset = 0;
+        let glowFineTuneOffset = 0;
+        let flickerFineTuneOffset = 0; const pastelColors = [
+            '#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9',
+            '#BAE1FF', '#D4BAFF', '#FFBAEF', '#FFCBA4',
+            '#C7CEEA', '#FFD1DC', '#E6E6FA', '#F0E68C',
+            '#98FB98', '#F5DEB3', '#DDA0DD', '#FFE4E1'
+        ];
+
+        const neonColors = [
+            '#FF0080', '#00FF80', '#8000FF', '#FF8000',
+            '#0080FF', '#80FF00', '#FF0040', '#40FF00',
+            '#0040FF', '#FF4000', '#00FF40', '#4000FF',
+            '#FF0000', '#00FF00', '#0000FF', '#FFFF00',
+            '#FF00FF', '#00FFFF', '#FF8080', '#80FF80'
+        ]; async function init() {
+            canvas = document.getElementById('canvas');
+            ctx = canvas.getContext('2d');
+            window.addEventListener('resize', onResize);
+            onResize();
+
+            // Parse URL parameters and set text input
+            parseUrlParameters();
+
+            await loadFont('Patrick Hand');
+
+            document.getElementById('startBtn').addEventListener('click', toggleAnimation);
+            document.getElementById('lpmSlider').addEventListener('input', updateLPM);
+            document.getElementById('lineOffMode').addEventListener('change', updateLineOffMode);
+            document.getElementById('trailSlider').addEventListener('input', updateTrailLength);
+            document.getElementById('dotSizeSlider').addEventListener('input', updateDotSize);
+            document.getElementById('jitterSlider').addEventListener('input', updateJitter);
+            document.getElementById('jitterFreqSlider').addEventListener('input', updateJitterFrequency);
+            document.getElementById('jitterShape').addEventListener('change', updateJitterShape);
+            document.getElementById('zoomSlider').addEventListener('input', updateZoom);
+            document.getElementById('fontSelect').addEventListener('change', changeFont); document.getElementById('colorMode').addEventListener('change', toggleColorMode); document.getElementById('glowSlider').addEventListener('input', updateGlow);
+            document.getElementById('flickerSlider').addEventListener('input', updateFlicker);
+            document.getElementById('lineSpacingSlider').addEventListener('input', updateLineSpacing);
+            document.getElementById('backgroundMode').addEventListener('change', updateBackgroundMode);
+            document.getElementById('backgroundColor').addEventListener('input', updateBackgroundColor);
+            document.getElementById('gradientColor').addEventListener('input', updateBackgroundColor);
+            document.getElementById('shareBtn').addEventListener('click', shareSettings); updateLPM();
+            updateZoom();
+            updateDotSize();
+            updateGlow();
+            updateFlicker();
+            updateLineSpacing();
+            updateBackgroundMode();
+            setupAdvancedSliderInteraction(); // Setup advanced slider interaction for all sliders
+        }
+
+        async function loadFont(fontName) {
+            const fontUrls = {
+                'Patrick Hand': 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/patrickhand/PatrickHand-Regular.ttf',
+                'Kalam': 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/kalam/Kalam-Regular.ttf',
+                'Handlee': 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/handlee/Handlee-Regular.ttf',
+                'Lobster': 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/lobster/Lobster-Regular.ttf',
+                'Architects Daughter': 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/architectsdaughter/ArchitectsDaughter-Regular.ttf',
+                'Indie Flower': 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/indieflower/IndieFlower-Regular.ttf',
+                'Amatic SC': 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/amaticsc/AmaticSC-Regular.ttf',
+                'Righteous': 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/righteous/Righteous-Regular.ttf',
+                'Pacifico': 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/pacifico/Pacifico-Regular.ttf',
+                'Courgette': 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/courgette/Courgette-Regular.ttf',
+                'Great Vibes': 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/greatvibes/GreatVibes-Regular.ttf'
+            };
+
+            try {
+                const resp = await fetch(fontUrls[fontName]);
+                const buf = await resp.arrayBuffer();
+                font = opentype.parse(buf);
+                document.getElementById('startBtn').disabled = false;
+            } catch (e) {
+                console.error('Font load failed', e);
+                alert('Could not load vector font');
+            }
+        }
+
+        async function toggleAnimation() {
+            if (isAnimating) {
+                // Stop animation
+                isAnimating = false;
+                globalAnimationStartTime = null; // Reset global timer
+                document.getElementById('startBtn').textContent = 'Start';
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                letterData = [];
+                scrollOffset = 0;
+                currentLine = 0;
+                trailPoints = []; // Clear trail points
+                stopFlickerAnimation(); // Stop flicker animation if running
+            } else {
+                // Start animation
+                trailPoints = []; // Clear trail points before starting
+                await startReveal();
+            }
+        }
+
+        function updateLPM() {
+            const sliderValue = parseInt(document.getElementById('lpmSlider').value);
+            // Map slider value (0-10) to logarithmic LPM scale (powers of 2: 1,2,4,...,1000)
+            const lpmValues = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1000];
+            lettersPerMinute = lpmValues[sliderValue];
+            document.getElementById('lpmValue').textContent = lettersPerMinute + ' LPM';
+        }
+
+        function updateLineOffMode() {
+            lineOffMode = document.getElementById('lineOffMode').checked;
+            // Clear trail points when mode changes
+            trailPoints = [];
+        } function updateTrailLength() {
+            const value = document.getElementById('trailSlider').value;
+            trailLength = parseFloat(value);
+            document.getElementById('trailValue').textContent = value + 's';
+            // Clear existing trail points when length changes
+            trailPoints = [];
+        }
+
+        function updateDotSize() {
+            const value = document.getElementById('dotSizeSlider').value;
+            dotSize = parseInt(value);
+            document.getElementById('dotSizeValue').textContent = value + 'px';
+        }
+
+        function updateJitter() {
+            const value = document.getElementById('jitterSlider').value;
+            jitterAmount = parseFloat(value);
+            document.getElementById('jitterValue').textContent = value;
+        } function updateJitterFrequency() {
+            const sliderValue = parseFloat(document.getElementById('jitterFreqSlider').value);
+
+            // Store the MPL directly as a decimal value from 0 to 100
+            jitterFrequency = sliderValue;
+
+            document.getElementById('jitterFreqValue').textContent = sliderValue.toFixed(1);
+        }
+        function updateJitterShape() {
+            jitterShape = document.getElementById('jitterShape').value;
+        } function updateLineSpacing() {
+            const sliderValue = parseInt(document.getElementById('lineSpacingSlider').value);
+            // Logarithmic scale for line spacing: 100, 150, 200, 250, 300, 350, 400, 500, 600, 800, 1000
+            const spacingValues = [100, 150, 200, 250, 300, 350, 400, 500, 600, 800, 1000];
+            const baseSpacing = spacingValues[sliderValue];
+
+            // Calculate line height based on font size and spacing multiplier
+            lineHeight = fontSize * (baseSpacing / 300); // 300 is the default
+            document.getElementById('lineSpacingValue').textContent = Math.round(lineHeight) + 'px';
+
+            // If we have text loaded, regenerate the paths with new spacing
+            if (letterData.length > 0) {
+                regenerateLetterPaths();
+            }
+        }
+
+        function updateBackgroundMode() {
+            backgroundMode = document.getElementById('backgroundMode').value;
+            const gradientColor = document.getElementById('gradientColor');
+            if (backgroundMode === 'gradient') {
+                gradientColor.style.display = 'inline-block';
+            } else {
+                gradientColor.style.display = 'none';
+            }
+            updateBackgroundColor();
+        }
+
+        function updateBackgroundColor() {
+            backgroundColor = document.getElementById('backgroundColor').value;
+            gradientColor = document.getElementById('gradientColor').value;
+
+            if (backgroundMode === 'solid') {
+                document.body.style.background = backgroundColor;
+                canvas.style.background = backgroundColor;
+            } else {
+                const gradient = `linear-gradient(135deg, ${backgroundColor}, ${gradientColor})`;
+                document.body.style.background = gradient;
+                canvas.style.background = gradient;
+            }
+        }
+
+        let glowSliderValue = 5; // Track current slider position
+
+        function updateGlow() {
+            const sliderValue = parseInt(document.getElementById('glowSlider').value);
+
+            // Logarithmic scale: 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024
+            const glowValues = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024];
+            const baseGlow = glowValues[sliderValue];
+
+            // Apply fine-tune offset (allow +/- one level)
+            let finalGlow = baseGlow;
+            if (glowFineTuneOffset !== 0) {
+                const currentIndex = sliderValue;
+                const targetIndex = Math.max(0, Math.min(glowValues.length - 1, currentIndex + glowFineTuneOffset));
+                const targetGlow = glowValues[targetIndex];
+                finalGlow = targetGlow;
+            } glowIntensity = finalGlow;
+            document.getElementById('glowValue').textContent = finalGlow.toString();
+        }
+
+        function updateFlicker() {
+            const sliderValue = parseInt(document.getElementById('flickerSlider').value);
+
+            // Logarithmic scale: 0, 1, 2, 4, 8, 16, 32, 64, 100, 200, 500 (percentages)
+            const flickerValues = [0, 1, 2, 4, 8, 16, 32, 64, 100, 200, 500];
+            const baseFlicker = flickerValues[sliderValue];
+
+            // Apply fine-tune offset (allow +/- one level)
+            let finalFlicker = baseFlicker;
+            if (flickerFineTuneOffset !== 0) {
+                const currentIndex = sliderValue;
+                const targetIndex = Math.max(0, Math.min(flickerValues.length - 1, currentIndex + flickerFineTuneOffset));
+                const targetFlicker = flickerValues[targetIndex];
+                finalFlicker = targetFlicker;
+            }
+
+            // Cap at 100% for display, but allow higher values for effect
+            flickerProbability = finalFlicker;
+            const displayValue = Math.min(finalFlicker, 100);
+            document.getElementById('flickerValue').textContent = displayValue + '%';
+
+            // Start or stop flicker animation based on probability
+            if (flickerProbability > 0) {
+                startFlickerAnimation();
+            } else {
+                stopFlickerAnimation();
+                // Redraw once to remove flicker
+                if (letterData.length > 0) {
+                    redrawCurrentState();
+                }
+            }
+        }        // Function to calculate jitter offset based on distance along path
+        function calculateJitter(distanceAlongPath, pointIndex = 0, totalPathLength = 100, letterIndex = 0, speedMultiplier = 1.0, pathDirection = null) {
+            if (jitterAmount === 0) return { x: 0, y: 0 };
+
+            // Get current MPL directly from jitterFrequency
+            const currentMPL = jitterFrequency;
+
+            // Use distance along path for consistent jitter regardless of drawing speed
+            // MPL = modulations per letter, so we scale by the distance through this letter
+            const distancePhase = (distanceAlongPath / totalPathLength) * currentMPL * (Math.PI * 2);
+
+            // Add letter-specific offset for variation between letters
+            const letterOffset = letterIndex * 0.1;
+            const phase = distancePhase + letterOffset;
+
+            // Ensure start and end points have zero jitter for proper alignment
+            const progressRatio = distanceAlongPath / totalPathLength;
+            let fadeMultiplier = 1.0;
+
+            // Fade jitter to zero at start and end of character for proper alignment
+            const fadeDistance = 0.05; // 5% fade at start/end
+            if (progressRatio < fadeDistance) {
+                fadeMultiplier = progressRatio / fadeDistance;
+            } else if (progressRatio > (1 - fadeDistance)) {
+                fadeMultiplier = (1 - progressRatio) / fadeDistance;
+            }
+
+            let offsetX = 0;
+            let offsetY = 0;
+
+            switch (jitterShape) {
+                case 'sine':
+                    // Use original orientation (up/down) for sine waves, not perpendicular
+                    offsetX = Math.sin(phase) * jitterAmount * 0.3;
+                    offsetY = Math.cos(phase * 0.7) * jitterAmount * 0.2; // Different frequency for Y
+                    break;
+
+                case 'cosine':
+                    // Cosine wave - 90 degree phase shift from sine
+                    offsetX = Math.cos(phase) * jitterAmount * 0.3;
+                    offsetY = Math.sin(phase * 0.7) * jitterAmount * 0.2;
+                    break;
+
+                case 'abs-sine':
+                    // Absolute sine - always positive displacement
+                    offsetX = Math.abs(Math.sin(phase)) * jitterAmount * 0.3;
+                    offsetY = Math.abs(Math.cos(phase * 0.7)) * jitterAmount * 0.2;
+                    // Center the absolute values around zero
+                    offsetX -= jitterAmount * 0.15;
+                    offsetY -= jitterAmount * 0.1;
+                    break;
+
+                case 'sawtooth':
+                    // Sawtooth wave - linear ramp up, sharp drop
+                    const sawPhase = (phase % (2 * Math.PI)) / (2 * Math.PI);
+                    offsetX = (sawPhase - 0.5) * jitterAmount * 0.6;
+
+                    const sawPhaseY = ((phase * 0.7) % (2 * Math.PI)) / (2 * Math.PI);
+                    offsetY = (sawPhaseY - 0.5) * jitterAmount * 0.4;
+                    break; case 'triangle':
+                    // Triangle wave
+                    const triPhaseX = phase % (2 * Math.PI);
+                    const triPhaseY = (phase * 0.7) % (2 * Math.PI);
+
+                    // Convert to triangle wave (0 to 1 to 0 to -1 to 0)
+                    const triX = triPhaseX / Math.PI;
+                    const triY = triPhaseY / Math.PI;
+
+                    if (pathDirection) {
+                        // Use path perpendicular direction for triangle jitter
+                        const perpX = -pathDirection.y;
+                        const perpY = pathDirection.x;
+                        const jitterMagnitude = ((triX <= 1 ? triX : 2 - triX) - 0.5) * jitterAmount * 0.6;
+                        offsetX = perpX * jitterMagnitude;
+                        offsetY = perpY * jitterMagnitude;
+                    } else {
+                        // Fallback to original implementation
+                        offsetX = (triX <= 1 ? triX : 2 - triX) * jitterAmount * 0.3 - jitterAmount * 0.15;
+                        offsetY = (triY <= 1 ? triY : 2 - triY) * jitterAmount * 0.2 - jitterAmount * 0.1;
+                    }
+                    break;
+
+                case 'square':
+                    if (pathDirection) {
+                        // Use path perpendicular direction for square jitter
+                        const perpX = -pathDirection.y;
+                        const perpY = pathDirection.x;
+                        const jitterMagnitude = Math.sign(Math.sin(phase)) * jitterAmount * 0.3;
+                        offsetX = perpX * jitterMagnitude;
+                        offsetY = perpY * jitterMagnitude;
+                    } else {
+                        // Fallback to original implementation
+                        offsetX = Math.sign(Math.sin(phase)) * jitterAmount * 0.3;
+                        offsetY = Math.sign(Math.cos(phase * 0.7)) * jitterAmount * 0.2;
+                    }
+                    break;
+
+                case 'noise':
+                    // Controlled noise based on phase
+                    const noiseX = Math.sin(phase * 12.9898) * 43758.5453;
+                    const noiseY = Math.sin(phase * 0.7 * 78.233) * 43758.5453;
+
+                    if (pathDirection) {
+                        // Use path perpendicular direction for noise jitter
+                        const perpX = -pathDirection.y;
+                        const perpY = pathDirection.x;
+                        const jitterMagnitude = (noiseX - Math.floor(noiseX) - 0.5) * jitterAmount * 0.6;
+                        offsetX = perpX * jitterMagnitude;
+                        offsetY = perpY * jitterMagnitude;
+                    } else {
+                        // Fallback to original implementation
+                        offsetX = (noiseX - Math.floor(noiseX) - 0.5) * jitterAmount * 0.6;
+                        offsetY = (noiseY - Math.floor(noiseY) - 0.5) * jitterAmount * 0.4;
+                    }
+                    break;
+            }
+
+            // Apply fade multiplier to ensure start/end alignment
+            offsetX *= fadeMultiplier;
+            offsetY *= fadeMultiplier;
+
+            return {
+                x: offsetX,
+                y: offsetY
+            };
+        }
+
+        function updateZoom() {
+            const value = document.getElementById('zoomSlider').value;
+            zoomFactor = parseFloat(value);
+
+            // Calculate actual font size: 100px to 500px range
+            const actualFontSize = baseFontSize * zoomFactor; // 200px * 0.5 to 2.5 = 100px to 500px
+            document.getElementById('zoomValue').textContent = Math.round(actualFontSize) + 'px';
+
+            // Update effective font size based on zoom
+            fontSize = actualFontSize;
+            lineHeight = fontSize * 1.5;
+
+            // If we have text loaded, regenerate the paths with new size
+            if (letterData.length > 0) {
+                regenerateLetterPaths();
+            }
+        }
+        function regenerateLetterPaths() {
+            const text = letterData.map(letter => letter.char).join('');
+            let x = margin;
+            let y = baselineY;
+            let currentLineNum = 0;
+            lineHeight = fontSize * 1.5; // Update line height based on new font size
+
+            for (let i = 0; i < letterData.length; i++) {
+                const ch = letterData[i].char;
+                const glyph = font.charToGlyph(ch) || font.charToGlyph(' ');
+                const w = glyph.advanceWidth * (fontSize / font.unitsPerEm);
+
+                // Check if we need to wrap to next line
+                if (x + w > canvas.width - margin && ch !== ' ') {
+                    x = margin;
+                    y += lineHeight;
+                    currentLineNum++;
+                }
+
+                // Handle space characters - if at beginning of line, skip them
+                if (ch === ' ' && x === margin) {
+                    // Keep existing color and char but mark as invisible
+                    letterData[i].pts = [];
+                    letterData[i].x = x;
+                    letterData[i].y = y;
+                    letterData[i].line = currentLineNum;
+                    continue;
+                } const path = glyph.getPath(x, y, fontSize);
+                const pts = samplePathWithCornerDetection(path.commands);
+
+                // Create Path2D object for filled rendering
+                const path2D = new Path2D();
+                path.commands.forEach(cmd => {
+                    switch (cmd.type) {
+                        case 'M':
+                            path2D.moveTo(cmd.x, cmd.y);
+                            break;
+                        case 'L':
+                            path2D.lineTo(cmd.x, cmd.y);
+                            break;
+                        case 'Q':
+                            path2D.quadraticCurveTo(cmd.x1, cmd.y1, cmd.x, cmd.y);
+                            break;
+                        case 'C':
+                            path2D.bezierCurveTo(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
+                            break;
+                        case 'Z':
+                            path2D.closePath();
+                            break;
+                    }
+                });                // Keep existing color but update paths and position
+                letterData[i].pts = pts;
+                letterData[i].path = path2D;
+                letterData[i].x = x;
+                letterData[i].y = y;
+                letterData[i].line = currentLineNum;
+                x += w;
+            }
+
+            // Redraw the canvas with new sizes
+            redrawCurrentState();
+        } function redrawCurrentState() {
+            if (letterData.length === 0) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Only draw letters if line mode is on
+            if (!lineOffMode) {                // Draw all completed letters
+                for (let i = 0; i < letterData.length; i++) {
+                    const letter = letterData[i];
+                    // Use stored jittered path if available, otherwise use original points
+                    const pathToUse = letter.jitteredPath || letter.pts;
+                    if (pathToUse && pathToUse.length > 0) {
+                        // Apply flicker effect - randomly skip drawing some letters
+                        const shouldFlicker = flickerProbability > 0 && Math.random() * 100 < flickerProbability;
+                        if (!shouldFlicker) {
+                            ctx.strokeStyle = letter.color;
+                            ctx.shadowColor = letter.color;
+                            ctx.shadowBlur = glowIntensity;
+                            const lineThickness = 3; // Fixed 3px line thickness
+                            ctx.lineWidth = lineThickness;
+                            ctx.lineCap = 'round';
+                            ctx.lineJoin = 'round';
+                            ctx.beginPath();
+                            ctx.moveTo(pathToUse[0].x, pathToUse[0].y - scrollOffset);
+
+                            pathToUse.forEach((p, idx) => {
+                                if (idx > 0) {
+                                    if (p.isPenLift) {
+                                        // Pen lift - move to new position without drawing
+                                        ctx.moveTo(p.x, p.y - scrollOffset);
+                                    } else {
+                                        ctx.lineTo(p.x, p.y - scrollOffset);
+                                    }
+                                }
+                            });
+                            ctx.stroke();
+                            ctx.shadowBlur = 0; // Reset shadow
+                        }
+                    }
+                }
+            }
+        }
+
+        // Flicker animation loop
+        let flickerAnimationId = null;
+
+        function startFlickerAnimation() {
+            if (flickerAnimationId) return; // Already running
+
+            function flickerLoop() {
+                if (flickerProbability > 0 && letterData.length > 0 && !isAnimating) {
+                    redrawCurrentState();
+                    flickerAnimationId = requestAnimationFrame(flickerLoop);
+                } else {
+                    flickerAnimationId = null;
+                }
+            }
+
+            if (flickerProbability > 0) {
+                flickerAnimationId = requestAnimationFrame(flickerLoop);
+            }
+        }
+
+        function stopFlickerAnimation() {
+            if (flickerAnimationId) {
+                cancelAnimationFrame(flickerAnimationId);
+                flickerAnimationId = null;
+            }
+        }
+
+        async function changeFont() {
+            const fontName = document.getElementById('fontSelect').value;
+            document.getElementById('startBtn').disabled = true;
+            await loadFont(fontName);
+        } function toggleColorMode() {
+            const mode = document.getElementById('colorMode').value;
+            const singleColor = document.getElementById('singleColor');
+            singleColor.style.display = mode === 'single' ? 'inline' : 'none';
+        } function shareSettings() {
+            try {
+                // Get all current settings
+                const settings = {
+                    text: document.getElementById('textInput').value,
+                    lpm: document.getElementById('lpmSlider').value,
+                    scale: document.getElementById('zoomSlider').value,
+                    lineOff: document.getElementById('lineOffMode').checked,
+                    trail: document.getElementById('trailSlider').value,
+                    dotSize: document.getElementById('dotSizeSlider').value,
+                    jitter: document.getElementById('jitterSlider').value,
+                    jitterFreq: document.getElementById('jitterFreqSlider').value,
+                    jitterShape: document.getElementById('jitterShape').value,
+                    font: document.getElementById('fontSelect').value,
+                    colorMode: document.getElementById('colorMode').value,
+                    singleColor: document.getElementById('singleColor').value,
+                    glow: document.getElementById('glowSlider').value,
+                    flicker: document.getElementById('flickerSlider').value,
+                    lineSpacing: document.getElementById('lineSpacingSlider').value,
+                    backgroundMode: document.getElementById('backgroundMode').value,
+                    backgroundColor: document.getElementById('backgroundColor').value,
+                    gradientColor: document.getElementById('gradientColor').value,
+                    fullscreenOnStart: document.getElementById('fullscreenOnStart').checked
+                };
+
+                // Create URL with all parameters
+                const baseUrl = window.location.origin + window.location.pathname;
+                const params = new URLSearchParams();
+
+                Object.keys(settings).forEach(key => {
+                    if (settings[key] !== null && settings[key] !== '') {
+                        params.append(key, settings[key]);
+                    }
+                });
+
+                const shareUrl = baseUrl + '?' + params.toString();
+
+                // Copy to clipboard
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    alert('Settings URL copied to clipboard! Share this link to let others see the exact same configuration.');
+                }).catch(err => {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = shareUrl;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('Settings URL copied to clipboard! Share this link to let others see the exact same configuration.');
+                });
+            } catch (error) {
+                console.error('Error sharing settings:', error);
+                alert('Error creating share URL. Please try again.');
+            }
+        } function enterFullscreen() {
+            return new Promise((resolve) => {
+                if (!document.fullscreenElement) {
+                    isEnteringFullscreen = true;
+                    // Enter fullscreen
+                    document.documentElement.requestFullscreen().then(() => {
+                        // Hide controls in fullscreen
+                        document.getElementById('controls').style.display = 'none';
+
+                        // Wait for fullscreen transition and then manually resize
+                        setTimeout(() => {
+                            // Manually set canvas size since onResize might not work properly during transition
+                            canvas.width = window.innerWidth;
+                            canvas.height = window.innerHeight;
+                            baselineY = canvas.height * 0.5;
+
+                            isEnteringFullscreen = false;
+                            console.log('Fullscreen activated successfully, canvas size:', canvas.width, 'x', canvas.height);
+                            resolve();
+                        }, 300);
+                    }).catch(err => {
+                        isEnteringFullscreen = false;
+                        console.error('Error attempting to enable fullscreen:', err);
+                        resolve(); // Continue even if fullscreen fails
+                    });
+                } else {
+                    resolve(); // Already in fullscreen
+                }
+            });
+        }
+
+        // Listen for fullscreen changes (ESC key, etc.)
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                // Exited fullscreen
+                document.getElementById('controls').style.display = 'flex';
+                onResize();
+            }
+        }); function onResize() {
+            // Don't interfere if we're in the middle of entering fullscreen
+            if (isEnteringFullscreen) {
+                return;
+            }
+
+            canvas.width = window.innerWidth;
+
+            // Check if we're in fullscreen mode
+            if (document.fullscreenElement) {
+                canvas.height = window.innerHeight;
+                baselineY = canvas.height * 0.5;
+            } else {
+                canvas.height = window.innerHeight - document.getElementById('controls').offsetHeight;
+                baselineY = canvas.height * 0.5;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Only reset animation state if we're not currently animating
+            // This prevents fullscreen transitions from interrupting the animation
+            if (!isAnimating || letterData.length === 0) {
+                scrollOffset = 0;
+                currentLine = 0;
+                letterData = [];
+                trailPoints = []; // Clear trail points
+                isAnimating = false;
+                document.getElementById('startBtn').textContent = 'Start';
+            } else {
+                // If we're animating, just regenerate the letter paths for the new canvas size
+                if (letterData.length > 0) {
+                    regenerateLetterPaths();
+                }
+            }
+        } async function startReveal() {
+            let text = document.getElementById('textInput').value.trim();
+            if (!text) return;
+
+            // Stop flicker animation during main animation
+            stopFlickerAnimation();
+
+            isAnimating = true;
+            document.getElementById('startBtn').textContent = 'Stop';
+
+            // Check if fullscreen on start is enabled
+            const fullscreenOnStart = document.getElementById('fullscreenOnStart').checked;
+            if (fullscreenOnStart) {
+                await enterFullscreen();
+                // After fullscreen, make sure we have the correct canvas dimensions
+                console.log('Fullscreen activated, canvas size:', canvas.width, 'x', canvas.height);
+            }            // Clear canvas and reset all state variables AFTER fullscreen is set
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            scrollOffset = 0;
+            letterData = [];
+            trailPoints = [];
+
+            // Initialize global animation timer for continuous jitter
+            globalAnimationStartTime = performance.now();
+
+            // Check if input is a URL
+            if (text.startsWith('http://') || text.startsWith('https://') || text.startsWith('www.')) {
+                try {
+                    document.getElementById('startBtn').textContent = 'Loading...';
+
+                    const extractedText = await extractTextFromUrl(text);
+                    if (extractedText && extractedText.length > 10) {
+                        text = extractedText;
+                        console.log('Extracted text:', text.substring(0, 100) + '...');
+                    } else {
+                        alert('Could not extract meaningful text from URL. Please try a different URL or paste text directly.');
+                        isAnimating = false;
+                        document.getElementById('startBtn').textContent = 'Start';
+                        return;
+                    }
+                } catch (e) {
+                    console.error('Error fetching URL:', e);
+                    alert('Error fetching URL. Please check the URL or try pasting text directly.');
+                    isAnimating = false;
+                    document.getElementById('startBtn').textContent = 'Start';
+                    return;
+                }
+            }            // Pre-calculate word wrapping with current font and canvas size
+            const words = text.split(/\s+/);
+            let layoutText = '';
+            let x = margin;
+            let y = baselineY;
+            currentLine = 0;
+
+            // Ensure we use the current line height calculation
+            const currentLineSpacing = parseInt(document.getElementById('lineSpacingSlider').value);
+            const spacingValues = [100, 150, 200, 250, 300, 350, 400, 500, 600, 800, 1000];
+            const baseSpacing = spacingValues[currentLineSpacing];
+            lineHeight = fontSize * (baseSpacing / 300); console.log('Text layout - Canvas:', canvas.width, 'x', canvas.height, 'Font size:', fontSize, 'Line height:', lineHeight);
+
+            for (let word of words) {
+                // Calculate word width
+                let wordWidth = 0;
+                for (let char of word) {
+                    const glyph = font.charToGlyph(char) || font.charToGlyph(' ');
+                    wordWidth += glyph.advanceWidth * (fontSize / font.unitsPerEm);
+                }
+
+                // Check if word fits on current line
+                if (x + wordWidth > canvas.width - margin && x > margin) {
+                    // Move to next line
+                    x = margin;
+                    y += lineHeight;
+                    currentLine++;
+                }
+
+                // Add word to layout
+                layoutText += word + ' ';
+                x += wordWidth + (font.charToGlyph(' ').advanceWidth * (fontSize / font.unitsPerEm));
+            }
+
+            // Now create letter data with proper positioning
+            x = margin;
+            y = baselineY;
+            currentLine = 0;
+
+            for (let i = 0; i < layoutText.length; i++) {
+                const ch = layoutText[i];
+                if (ch === ' ' && x === margin) continue; // Skip spaces at line start
+
+                const glyph = font.charToGlyph(ch) || font.charToGlyph(' ');
+                const w = glyph.advanceWidth * (fontSize / font.unitsPerEm);
+
+                // Check if we need to wrap (recalculate based on words)
+                if (ch === ' ') {
+                    // Look ahead to see if next word fits
+                    let nextWordEnd = i + 1;
+                    while (nextWordEnd < layoutText.length && layoutText[nextWordEnd] !== ' ') {
+                        nextWordEnd++;
+                    }
+
+                    let nextWordWidth = 0;
+                    for (let j = i + 1; j < nextWordEnd; j++) {
+                        const nextGlyph = font.charToGlyph(layoutText[j]) || font.charToGlyph(' ');
+                        nextWordWidth += nextGlyph.advanceWidth * (fontSize / font.unitsPerEm);
+                    }
+
+                    if (x + nextWordWidth > canvas.width - margin) {
+                        x = margin;
+                        y += lineHeight;
+                        currentLine++;
+                        continue; // Skip this space
+                    }
+                } const path = glyph.getPath(x, y, fontSize);
+                const pts = samplePathWithCornerDetection(path.commands);
+
+                // Create Path2D object for filled rendering
+                const path2D = new Path2D();
+                path.commands.forEach(cmd => {
+                    switch (cmd.type) {
+                        case 'M':
+                            path2D.moveTo(cmd.x, cmd.y);
+                            break;
+                        case 'L':
+                            path2D.lineTo(cmd.x, cmd.y);
+                            break;
+                        case 'Q':
+                            path2D.quadraticCurveTo(cmd.x1, cmd.y1, cmd.x, cmd.y);
+                            break;
+                        case 'C':
+                            path2D.bezierCurveTo(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
+                            break;
+                        case 'Z':
+                            path2D.closePath();
+                            break;
+                    }
+                }); const colorMode = document.getElementById('colorMode').value;
+                let color;
+                if (colorMode === 'single') {
+                    color = document.getElementById('singleColor').value;
+                } else if (colorMode === 'neon') {
+                    color = neonColors[i % neonColors.length];
+                } else {
+                    color = pastelColors[i % pastelColors.length];
+                }
+
+                letterData.push({ pts, path: path2D, x, y, color, char: ch, line: currentLine });
+                x += w;
+            }
+
+            console.log(`Starting animation with ${letterData.length} letters`);            // Initialize scroll offset to gently center the first line
+            if (letterData.length > 0) {
+                const firstLineY = letterData[0].y;
+                const targetCenterY = canvas.height / 2;
+                // Start with a gentle offset towards centering
+                scrollOffset = (firstLineY - targetCenterY) * 0.7; // Only 70% of the full offset
+            }
+
+            await drawSequential(0);
+
+            if (isAnimating) {
+                isAnimating = false;
+                document.getElementById('startBtn').textContent = 'Start';
+                // Start flicker animation if probability > 0
+                if (flickerProbability > 0) {
+                    startFlickerAnimation();
+                }
+            }
+        }
+        async function extractTextFromUrl(url) {
+            try {
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'https://' + url;
+                }
+
+                // Try multiple CORS proxies as fallbacks
+                const proxies = [
+                    'https://api.allorigins.win/get?url=',
+                    'https://corsproxy.io/?',
+                    'https://api.codetabs.com/v1/proxy?quest='
+                ];
+
+                for (const proxy of proxies) {
+                    try {
+                        const proxyUrl = proxy + encodeURIComponent(url);
+                        const response = await fetch(proxyUrl);
+                        const data = await response.json();
+
+                        let htmlContent = '';
+                        if (data.contents) {
+                            htmlContent = data.contents;
+                        } else if (data.content) {
+                            htmlContent = data.content;
+                        } else if (typeof data === 'string') {
+                            htmlContent = data;
+                        }
+
+                        if (htmlContent) {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(htmlContent, 'text/html');
+
+                            const scripts = doc.querySelectorAll('script, style, nav, header, footer, aside, .nav, .menu, .sidebar');
+                            scripts.forEach(el => el.remove());
+
+                            let text = '';
+                            const mainSelectors = ['main', 'article', '.content', '.post', '.entry', '[role="main"]', '.main-content'];
+
+                            for (const selector of mainSelectors) {
+                                const elements = doc.querySelectorAll(selector);
+                                if (elements.length > 0) {
+                                    text = Array.from(elements)
+                                        .map(el => el.textContent)
+                                        .join(' ')
+                                        .replace(/\s+/g, ' ')
+                                        .trim();
+                                    if (text.length > 100) break;
+                                }
+                            }
+
+                            // Fallback to paragraphs if no main content found
+                            if (text.length < 100) {
+                                const paragraphs = doc.querySelectorAll('p');
+                                if (paragraphs.length > 0) {
+                                    text = Array.from(paragraphs)
+                                        .map(p => p.textContent)
+                                        .join(' ')
+                                        .replace(/\s+/g, ' ')
+                                        .trim();
+                                }
+                            }
+
+                            // Final fallback to body text
+                            if (text.length < 100) {
+                                text = doc.body ? doc.body.textContent.replace(/\s+/g, ' ').trim() : '';
+                            }
+
+                            if (text.length > 50) {
+                                return text.substring(0, 2000);
+                            }
+                        }
+                    } catch (proxyError) {
+                        console.log(`Proxy ${proxy} failed:`, proxyError.message);
+                        continue; // Try next proxy
+                    }
+                }
+
+                throw new Error('All proxies failed');
+
+            } catch (error) {
+                console.error('Error extracting text:', error);
+                return null;
+            }
+        }
+
+        async function drawSequential(idx) {
+            if (idx >= letterData.length || !isAnimating) return;
+
+            // Add smooth pen movement between letters
+            if (idx > 0) {
+                await movePenToNextLetter(idx - 1, idx);
+            }
+
+            if (!isAnimating) return; // Check again after pen movement
+
+            await drawLetter(idx);
+            await drawSequential(idx + 1);
+        }
+        async function movePenToNextLetter(fromIndex, toIndex) {
+            const fromLetter = letterData[fromIndex];
+            const toLetter = letterData[toIndex];
+
+            if (!fromLetter.pts || fromLetter.pts.length === 0 ||
+                !toLetter.pts || toLetter.pts.length === 0) {
+                return;
+            }
+
+            // Check if we're moving to a new line
+            const isNewLine = toLetter.line > fromLetter.line;
+
+            let startPoint, endPoint;
+
+            if (isNewLine) {
+                // For line breaks, move from end of current letter to beginning of next line
+                startPoint = fromLetter.pts[fromLetter.pts.length - 1];
+                endPoint = { x: margin, y: toLetter.y }; // Start of new line
+
+                // Create two-stage movement: first to left margin, then down to new line
+                await movePenInStages(startPoint, endPoint, fromIndex, toIndex);
+
+                // Then move from left margin to actual letter start
+                if (toLetter.x > margin) {
+                    startPoint = { x: margin, y: toLetter.y };
+                    endPoint = toLetter.pts[0];
+                    await movePenDirect(startPoint, endPoint, toIndex);
+                }
+            } else {
+                // Normal horizontal movement
+                startPoint = fromLetter.pts[fromLetter.pts.length - 1];
+                endPoint = toLetter.pts[0];
+                await movePenDirect(startPoint, endPoint, toIndex);
+            }
+        }
+
+        async function movePenInStages(startPoint, endPoint, fromIndex, toIndex) {
+            const toLetter = letterData[toIndex];
+
+            // First stage: move horizontally to left edge
+            const midPoint = { x: margin, y: startPoint.y };
+            await movePenDirect(startPoint, midPoint, toIndex);
+
+            // Second stage: move down to new line
+            await movePenDirect(midPoint, endPoint, toIndex);
+        }
+
+        async function movePenDirect(startPoint, endPoint, toIndex) {
+            const toLetter = letterData[toIndex];
+
+            const distance = Math.sqrt(
+                Math.pow(endPoint.x - startPoint.x, 2) +
+                Math.pow(endPoint.y - startPoint.y, 2)
+            );            // Calculate duration based on LPM mode
+            const letterDuration = (60 / lettersPerMinute) * 1000;
+            const duration = Math.max(200, letterDuration * 0.15); // 15% of letter time for pen movement
+
+            return new Promise(resolve => {
+                let startTime = null; function step(ts) {
+                    if (!startTime) startTime = ts;
+
+                    const elapsed = ts - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+
+                    // Calculate global animation time for continuous jitter during pen movement
+                    const globalElapsed = ts - globalAnimationStartTime;
+
+                    // Use linear progress for constant speed (no easing)
+                    const currentX = startPoint.x + (endPoint.x - startPoint.x) * progress;
+                    const currentY = startPoint.y + (endPoint.y - startPoint.y) * progress;// Gentle smooth scrolling for pen movement
+                    const penY = currentY - scrollOffset;
+                    const targetCenterY = canvas.height / 2; // Center of screen
+                    const currentCenterOffset = penY - targetCenterY;
+
+                    // Very gentle centering for pen movement - only when significantly off
+                    if (Math.abs(currentCenterOffset) > 60) {
+                        // Gentle adjustment for when pen is well off-center
+                        scrollOffset += currentCenterOffset * 0.015;
+                    }// Define line thickness for this function (fixed 3px)
+                    const lineThickness = 3;
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    // Draw trail points with fading effect
+                    if (trailLength > 0 && trailPoints.length > 0) {
+                        const currentTime = performance.now();
+                        // Remove old trail points
+                        trailPoints = trailPoints.filter(point => {
+                            return (currentTime - point.timestamp) < (trailLength * 1000);
+                        });
+
+                        // Draw trail points with opacity based on age
+                        trailPoints.forEach(point => {
+                            const age = (currentTime - point.timestamp) / (trailLength * 1000);
+                            const opacity = 1 - age;
+                            ctx.fillStyle = point.color;
+                            ctx.globalAlpha = opacity;
+                            ctx.beginPath();
+                            ctx.arc(point.x, point.y - scrollOffset, point.size, 0, 2 * Math.PI);
+                            ctx.fill();
+                        });
+                        ctx.globalAlpha = 1; // Reset alpha
+                    }                    // Redraw all previous completed letters with scroll offset (only if line mode is on)
+                    if (!lineOffMode) {
+                        for (let i = 0; i < letterData.length; i++) {
+                            const letter = letterData[i];
+                            // Use stored jittered path if available, otherwise use original points
+                            const pathToUse = letter.jitteredPath || letter.pts;
+                            if (pathToUse && pathToUse.length > 0 && i < toIndex) {
+                                // Apply flicker effect - randomly skip drawing some letters
+                                const shouldFlicker = flickerProbability > 0 && Math.random() * 100 < flickerProbability;
+                                if (!shouldFlicker) {
+                                    ctx.strokeStyle = letter.color;
+                                    ctx.shadowColor = letter.color;
+                                    ctx.shadowBlur = glowIntensity;
+                                    const letterLineThickness = 3; // Fixed 3px line thickness
+                                    ctx.lineWidth = letterLineThickness;
+                                    ctx.lineCap = 'round';
+                                    ctx.lineJoin = 'round';
+                                    ctx.beginPath();
+                                    ctx.moveTo(pathToUse[0].x, pathToUse[0].y - scrollOffset);
+                                    pathToUse.forEach((p, idx) => {
+                                        if (idx > 0) {
+                                            if (p.isPenLift) {
+                                                // Pen lift - move to new position without drawing
+                                                ctx.moveTo(p.x, p.y - scrollOffset);
+                                            } else {
+                                                ctx.lineTo(p.x, p.y - scrollOffset);
+                                            }
+                                        }
+                                    });
+                                    ctx.stroke();
+                                    ctx.shadowBlur = 0; // Reset shadow
+                                }
+                            }
+                        }
+                    }                    // Draw moving pen dot (pen up - no trail) - 5px with glow
+                    // Apply jitter to pen dot during movement for continuous effect
+                    // Use distance along pen movement path for consistent jitter
+                    const movementDistance = distance * progress; // Distance traveled so far
+                    const penJitter = calculateJitter(movementDistance, 0, distance, toIndex, 1.0, null);
+                    const jitteredX = currentX + penJitter.x;
+                    const jitteredY = currentY + penJitter.y;                        // Add to trail if trail length > 0 (use jittered position)
+                    if (trailLength > 0) {
+                        trailPoints.push({
+                            x: jitteredX,
+                            y: jitteredY,
+                            color: toLetter.color,
+                            size: dotSize,
+                            timestamp: performance.now()
+                        });
+                    }
+
+                    // Add glow effect
+                    ctx.shadowColor = toLetter.color;
+                    ctx.shadowBlur = glowIntensity;
+                    ctx.fillStyle = toLetter.color;
+                    ctx.beginPath();
+                    ctx.arc(jitteredX, jitteredY - scrollOffset, dotSize, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.shadowBlur = 0; // Reset shadow
+
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        resolve();
+                    }
+                }
+                step(performance.now());
+            });
+        } function drawLetter(index) {
+            return new Promise(resolve => {
+                const letterInfo = letterData[index];
+                const pts = letterInfo.pts;
+                if (!pts || pts.length === 0) {
+                    resolve();
+                    return;
+                }
+
+                // Check if animation should stop
+                if (!isAnimating) {
+                    resolve();
+                    return;
+                }
+
+                // Pre-calculate all jittered points for this letter BEFORE starting animation
+                // This ensures consistent jitter regardless of drawing speed
+                const jitteredPath = [];
+
+                // Calculate total path length for consistent jitter spacing
+                let totalLength = 0;
+                const segmentLengths = [];
+
+                for (let i = 1; i < pts.length; i++) {
+                    const dx = pts[i].x - pts[i - 1].x;
+                    const dy = pts[i].y - pts[i - 1].y;
+                    const segmentLength = Math.sqrt(dx * dx + dy * dy);
+                    segmentLengths.push(segmentLength);
+                    totalLength += segmentLength;
+                }
+
+                // Pre-calculate jittered points for entire path
+                let cumulativeDistance = 0;
+                for (let i = 0; i < pts.length; i++) {
+                    // Calculate distance along path for this point
+                    if (i > 0) {
+                        cumulativeDistance += segmentLengths[i - 1];
+                    }
+
+                    // Calculate path direction for this point
+                    let pathDirection = null;
+                    if (i > 0) {
+                        const dx = pts[i].x - pts[i - 1].x;
+                        const dy = pts[i].y - pts[i - 1].y;
+                        const length = Math.sqrt(dx * dx + dy * dy);
+                        if (length > 0) {
+                            pathDirection = { x: dx / length, y: dy / length };
+                        }
+                    }
+
+                    // Calculate jitter based on distance along path (not time)
+                    const jitter = calculateJitter(cumulativeDistance, i, totalLength, index, 1.0, pathDirection);
+                    jitteredPath.push({
+                        x: pts[i].x + jitter.x,
+                        y: pts[i].y + jitter.y,
+                        isPenLift: pts[i].isPenLift || false
+                    });
+                }
+
+                // Store the completed jittered path for this letter immediately
+                letterInfo.jitteredPath = [...jitteredPath];                // Update line thickness (fixed 3px)
+                const lineThickness = 3;
+                ctx.lineWidth = lineThickness;
+                ctx.fillStyle = letterInfo.color;
+                ctx.strokeStyle = letterInfo.color;
+
+                // Gentle smooth scrolling to keep writing line centered
+                const letterY = letterInfo.y - scrollOffset;
+                const targetCenterY = canvas.height / 2; // Center of screen
+                const currentCenterOffset = letterY - targetCenterY;
+
+                // Look ahead to see if we're approaching a line change
+                let isApproachingLineChange = false;
+                if (index < letterData.length - 1) {
+                    const nextLetter = letterData[index + 1];
+                    if (nextLetter && nextLetter.line > letterInfo.line) {
+                        isApproachingLineChange = true;
+                    }
+                }
+
+                // Adjust scrolling based on context
+                if (isApproachingLineChange && Math.abs(currentCenterOffset) > 30) {
+                    // Slightly more responsive when approaching a line change
+                    scrollOffset += currentCenterOffset * 0.03;
+                } else if (Math.abs(currentCenterOffset) > 50) {
+                    // Very gentle adjustment for when text is well off-center
+                    scrollOffset += currentCenterOffset * 0.02;
+                } else if (Math.abs(currentCenterOffset) > 20) {
+                    // Even gentler for moderate offsets
+                    scrollOffset += currentCenterOffset * 0.008;
+                }
+
+                // Letters per minute timing - constant speed
+                const baseDuration = (60 / lettersPerMinute) * 1000;
+                const totalDuration = baseDuration;
+
+                let startTime = null;
+                function step(ts) {
+                    if (!startTime) startTime = ts;
+
+                    if (!isAnimating) {
+                        resolve();
+                        return;
+                    }
+
+                    const elapsed = ts - startTime;
+                    let progress = Math.min(elapsed / totalDuration, 1);
+
+                    // Calculate how many points to show based on progress (using pre-calculated jittered path)
+                    const targetPointCount = Math.floor(progress * jitteredPath.length);
+                    const currentJitteredPath = jitteredPath.slice(0, Math.max(1, targetPointCount));
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    // Draw trail points with fading effect
+                    if (trailLength > 0 && trailPoints.length > 0) {
+                        const currentTime = performance.now();
+                        // Remove old trail points
+                        trailPoints = trailPoints.filter(point => {
+                            return (currentTime - point.timestamp) < (trailLength * 1000);
+                        });
+
+                        // Draw trail points with opacity based on age
+                        trailPoints.forEach(point => {
+                            const age = (currentTime - point.timestamp) / (trailLength * 1000);
+                            const opacity = 1 - age;
+                            ctx.fillStyle = point.color;
+                            ctx.globalAlpha = opacity;
+                            ctx.beginPath();
+                            ctx.arc(point.x, point.y - scrollOffset, point.size, 0, 2 * Math.PI);
+                            ctx.fill();
+                        });
+                        ctx.globalAlpha = 1; // Reset alpha
+                    }
+
+                    // Redraw previous letters with scroll offset (only if line mode is on)
+                    if (!lineOffMode) {
+                        for (let i = 0; i < index; i++) {
+                            const prevLetter = letterData[i];
+                            // Use stored jittered path if available, otherwise use original points
+                            const pathToUse = prevLetter.jitteredPath || prevLetter.pts;
+                            if (pathToUse && pathToUse.length > 0) {
+                                // Apply flicker effect - randomly skip drawing some letters
+                                const shouldFlicker = flickerProbability > 0 && Math.random() * 100 < flickerProbability;
+                                if (!shouldFlicker) {
+                                    ctx.strokeStyle = prevLetter.color;
+                                    ctx.shadowColor = prevLetter.color;
+                                    ctx.shadowBlur = glowIntensity;
+                                    ctx.lineWidth = 3; // Fixed 3px line thickness
+                                    ctx.lineCap = 'round';
+                                    ctx.lineJoin = 'round';
+                                    ctx.beginPath();
+                                    ctx.moveTo(pathToUse[0].x, pathToUse[0].y - scrollOffset);
+
+                                    pathToUse.forEach((p, idx) => {
+                                        if (idx > 0) {
+                                            if (p.isPenLift) {
+                                                // Pen lift - move to new position without drawing
+                                                ctx.moveTo(p.x, p.y - scrollOffset);
+                                            } else {
+                                                ctx.lineTo(p.x, p.y - scrollOffset);
+                                            }
+                                        }
+                                    });
+                                    ctx.stroke();
+                                    ctx.shadowBlur = 0; // Reset shadow
+                                }
+                            }
+                        }
+                    }
+
+                    // Draw current letter up to current progress using pre-calculated jittered points
+                    if (!lineOffMode && currentJitteredPath.length > 1) {
+                        ctx.strokeStyle = letterInfo.color;
+                        ctx.shadowColor = letterInfo.color;
+                        ctx.shadowBlur = glowIntensity;
+                        ctx.lineWidth = lineThickness;
+                        ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+                        ctx.beginPath();
+
+                        // Move to first jittered point
+                        ctx.moveTo(currentJitteredPath[0].x, currentJitteredPath[0].y - scrollOffset);
+
+                        // Draw line to each jittered point
+                        for (let i = 1; i < currentJitteredPath.length; i++) {
+                            if (currentJitteredPath[i].isPenLift) {
+                                // Pen lift - move to new position without drawing
+                                ctx.moveTo(currentJitteredPath[i].x, currentJitteredPath[i].y - scrollOffset);
+                            } else {
+                                ctx.lineTo(currentJitteredPath[i].x, currentJitteredPath[i].y - scrollOffset);
+                            }
+                        }
+
+                        ctx.stroke();
+                        ctx.shadowBlur = 0; // Reset shadow
+                    }
+
+                    // Draw chalk dot at current position using pre-calculated jittered position
+                    if (currentJitteredPath.length > 0) {
+                        const currentJitteredPoint = currentJitteredPath[currentJitteredPath.length - 1];                        // Add to trail if trail length > 0
+                        if (trailLength > 0) {
+                            trailPoints.push({
+                                x: currentJitteredPoint.x,
+                                y: currentJitteredPoint.y,
+                                color: letterInfo.color,
+                                size: dotSize,
+                                timestamp: performance.now()
+                            });
+                        }
+
+                        // Draw current dot with glow
+                        ctx.shadowColor = letterInfo.color;
+                        ctx.shadowBlur = glowIntensity;
+                        ctx.fillStyle = letterInfo.color;
+                        ctx.beginPath();
+                        ctx.arc(currentJitteredPoint.x, currentJitteredPoint.y - scrollOffset, dotSize, 0, 2 * Math.PI);
+                        ctx.fill();
+                        ctx.shadowBlur = 0; // Reset shadow
+                    }
+
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        resolve();
+                    }
+                }
+
+                step(performance.now());
+            });
+        }
+
+        function samplePath(cmds) {
+            const pts = [];
+            let prev = { x: 0, y: 0 };
+            cmds.forEach(c => {
+                if ((c.type === 'M' || c.type === 'L') && c.x != null && c.y != null) {
+                    prev = { x: c.x, y: c.y }; pts.push(prev);
+                } else if (c.type === 'Q' && c.x1 != null) {
+                    for (let t = 0; t <= 1; t += 0.05) {
+                        const x = (1 - t) * (1 - t) * prev.x + 2 * (1 - t) * t * c.x1 + t * t * c.x;
+                        const y = (1 - t) * (1 - t) * prev.y + 2 * (1 - t) * t * c.y1 + t * t * c.y;
+                        pts.push({ x, y });
+                    }
+                    prev = { x: c.x, y: c.y };
+                } else if (c.type === 'C' && c.x1 != null) {
+                    for (let t = 0; t <= 1; t += 0.03) {
+                        const x = Math.pow(1 - t, 3) * prev.x + 3 * Math.pow(1 - t, 2) * t * c.x1 + 3 * (1 - t) * t * t * c.x2 + t * t * t * c.x;
+                        const y = Math.pow(1 - t, 3) * prev.y + 3 * Math.pow(1 - t, 2) * t * c.y1 + 3 * (1 - t) * t * t * c.y2 + t * t * t * c.y;
+                        pts.push({ x, y });
+                    }
+                    prev = { x: c.x, y: c.y };
+                }
+            });
+            return pts;
+        } function samplePathWithCornerDetection(cmds) {
+            const pts = [];
+            let prev = { x: 0, y: 0 };
+            let isFirstMove = true;
+
+            cmds.forEach(c => {
+                if (c.type === 'M' && c.x != null && c.y != null) {
+                    // Mark pen lift for moves after the first one (separate contours)
+                    if (!isFirstMove) {
+                        // Add a pen lift marker before starting new contour
+                        pts.push({ x: c.x, y: c.y, isPenLift: true });
+                    }
+                    prev = { x: c.x, y: c.y };
+                    pts.push(prev);
+                    isFirstMove = false;
+                } else if (c.type === 'L' && c.x != null && c.y != null) {
+                    // For straight lines, add intermediate points to ensure adequate jitter sampling
+                    const dx = c.x - prev.x;
+                    const dy = c.y - prev.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    // Add intermediate points every 5-10 pixels for better jitter visibility
+                    const stepSize = 8; // pixels between points
+                    const steps = Math.max(1, Math.floor(distance / stepSize));
+
+                    for (let i = 1; i <= steps; i++) {
+                        const t = i / steps;
+                        const x = prev.x + dx * t;
+                        const y = prev.y + dy * t;
+                        pts.push({ x, y, isLine: true });
+                    }
+
+                    prev = { x: c.x, y: c.y };
+                } else if (c.type === 'Q' && c.x1 != null) {
+                    for (let t = 0; t <= 1; t += 0.05) {
+                        const x = (1 - t) * (1 - t) * prev.x + 2 * (1 - t) * t * c.x1 + t * t * c.x;
+                        const y = (1 - t) * (1 - t) * prev.y + 2 * (1 - t) * t * c.y1 + t * t * c.y;
+                        pts.push({ x, y, isCurve: true });
+                    }
+                    prev = { x: c.x, y: c.y };
+                } else if (c.type === 'C' && c.x1 != null) {
+                    for (let t = 0; t <= 1; t += 0.03) {
+                        const x = Math.pow(1 - t, 3) * prev.x + 3 * Math.pow(1 - t, 2) * t * c.x1 + 3 * (1 - t) * t * t * c.x2 + t * t * t * c.x;
+                        const y = Math.pow(1 - t, 3) * prev.y + 3 * Math.pow(1 - t, 2) * t * c.y1 + 3 * (1 - t) * t * t * c.y2 + t * t * t * c.y;
+                        pts.push({ x, y, isCurve: true });
+                    }
+                    prev = { x: c.x, y: c.y };
+                }
+            });
+
+            // Enhanced corner detection with better sensitivity
+            for (let i = 1; i < pts.length - 1; i++) {
+                const p1 = pts[i - 1];
+                const p2 = pts[i];
+                const p3 = pts[i + 1];
+
+                const v1x = p2.x - p1.x;
+                const v1y = p2.y - p1.y;
+                const v2x = p3.x - p2.x;
+                const v2y = p3.y - p2.y;
+
+                const dot = v1x * v2x + v1y * v2y;
+                const mag1 = Math.sqrt(v1x * v1x + v1y * v1y);
+                const mag2 = Math.sqrt(v2x * v2x + v2y * v2y);
+
+                if (mag1 > 0 && mag2 > 0) {
+                    const cosAngle = dot / (mag1 * mag2);
+                    const angle = Math.acos(Math.max(-1, Math.min(1, cosAngle)));
+
+                    // More sensitive corner detection
+                    if (angle < Math.PI * 0.8) { // Increased from 0.67 to 0.8 for more sensitivity
+                        pts[i].isCorner = true;
+                    }
+                }
+            }
+
+            return pts;
+        }
+
+        // Simplified advanced slider interaction
+        function setupAdvancedSliderInteraction() {
+            // For now, just enable the basic slider functionality
+            // The logarithmic scales are handled in the individual update functions
+            console.log('Advanced slider interaction setup complete');
+        } function parseUrlParameters() {
+            // Get URL parameters after the ?
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // Parse all settings from URL parameters
+            const textParam = urlParams.get('text');
+            if (textParam) {
+                document.getElementById('textInput').value = decodeURIComponent(textParam);
+            }            // Parse slider and control values
+            const lpm = urlParams.get('lpm');
+            if (lpm) document.getElementById('lpmSlider').value = lpm;
+
+            const scale = urlParams.get('scale');
+            if (scale) document.getElementById('zoomSlider').value = scale;
+
+            const lineOff = urlParams.get('lineOff');
+            if (lineOff) document.getElementById('lineOffMode').checked = lineOff === 'true'; const trail = urlParams.get('trail');
+            if (trail) document.getElementById('trailSlider').value = trail;
+
+            const dotSize = urlParams.get('dotSize');
+            if (dotSize) document.getElementById('dotSizeSlider').value = dotSize;
+
+            const jitter = urlParams.get('jitter');
+            if (jitter) document.getElementById('jitterSlider').value = jitter;
+
+            const jitterFreq = urlParams.get('jitterFreq');
+            if (jitterFreq) document.getElementById('jitterFreqSlider').value = jitterFreq;
+
+            const jitterShape = urlParams.get('jitterShape');
+            if (jitterShape) document.getElementById('jitterShape').value = jitterShape;
+
+            const font = urlParams.get('font');
+            if (font) document.getElementById('fontSelect').value = font;
+
+            const colorMode = urlParams.get('colorMode');
+            if (colorMode) document.getElementById('colorMode').value = colorMode;
+
+            const singleColor = urlParams.get('singleColor');
+            if (singleColor) document.getElementById('singleColor').value = singleColor;
+
+            const glow = urlParams.get('glow');
+            if (glow) document.getElementById('glowSlider').value = glow;
+
+            const flicker = urlParams.get('flicker');
+            if (flicker) document.getElementById('flickerSlider').value = flicker; const lineSpacing = urlParams.get('lineSpacing');
+            if (lineSpacing) document.getElementById('lineSpacingSlider').value = lineSpacing;
+
+            const backgroundMode = urlParams.get('backgroundMode');
+            if (backgroundMode) document.getElementById('backgroundMode').value = backgroundMode;
+
+            const backgroundColor = urlParams.get('backgroundColor');
+            if (backgroundColor) document.getElementById('backgroundColor').value = backgroundColor;
+
+            const gradientColor = urlParams.get('gradientColor');
+            if (gradientColor) document.getElementById('gradientColor').value = gradientColor;
+
+            const fullscreenOnStart = urlParams.get('fullscreenOnStart');
+            if (fullscreenOnStart) document.getElementById('fullscreenOnStart').checked = fullscreenOnStart === 'true';            // Update all displays after parsing
+            setTimeout(async () => {
+                updateLPM();
+                updateZoom();
+                updateGlow();
+                updateFlicker();
+                updateLineSpacing();
+                updateJitter();
+                updateJitterFrequency();
+                updateTrailLength();
+                updateBackgroundMode();
+                toggleColorMode();
+
+                // Load font if it was specified in URL parameters
+                const font = urlParams.get('font');
+                if (font && font !== 'Patrick Hand') {
+                    document.getElementById('startBtn').disabled = true;
+                    await loadFont(font);
+                }
+            }, 100);
+
+            // Fallback for old-style URL parameters (everything after ? as text)
+            if (!textParam && window.location.search.length > 1) {
+                const queryString = window.location.search.substring(1);
+                if (!queryString.includes('=')) {
+                    document.getElementById('textInput').value = decodeURIComponent(queryString);
+                }
+            }
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
