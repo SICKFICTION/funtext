@@ -122,15 +122,62 @@
             display: block;
             background: #001111;
         }
+
+        /* Message overlay for shared messages */
+        #messageOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 17, 17, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        #messageOverlay.hidden {
+            display: none;
+        }
+
+        #messageButton {
+            padding: 20px 40px;
+            font-size: 1.2rem;
+            background: #004444;
+            color: #fff;
+            border: 2px solid #006666;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            max-width: 80%;
+            line-height: 1.4;
+        }
+
+        #messageButton:hover {
+            background: #006666;
+            border-color: #008888;
+        }
+
+        #fromInput {
+            flex: 0 0 200px;
+            min-width: 150px;
+            padding: 8px;
+            font-size: 1rem;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: #003333;
+            color: #fff;
+        }
     </style>
 </head>
 
 <body>
-    <div id="controls">
-        <!-- First Row: Text Input, Start/Share buttons, and Basic Controls -->
+    <div id="controls"> <!-- First Row: Text Input, Start/Share buttons, and Basic Controls -->
         <div class="control-row">
             <input id="textInput" placeholder="Paste text here or enter a URL..."
-                value="Watch the dot draw the words and relax. Slow Reader by James.Mulvale@gmail.com" />
+                value="Watch the pen! Calm your mind! Slow Reader by sickfiction@gmail.com" />
+            <input id="fromInput" placeholder="From (your name/email)" />
             <button id="startBtn" disabled>Start</button>
             <button id="shareBtn">Share</button>
             <div class="control-group">
@@ -216,16 +263,15 @@
                 <input type="range" id="trailSlider" min="0" max="2" step="0.1" value="0" />
                 <span id="trailValue">0.0s</span>
             </div>
-
             <div class="control-group">
                 <label>Glow:</label>
-                <input type="range" id="glowSlider" min="0" max="10" step="1" value="4" />
-                <span id="glowValue">8</span>
+                <input type="range" id="glowSlider" min="0" max="100" step="1" value="8" />
+                <span id="glowValue">8%</span>
             </div>
 
             <div class="control-group">
                 <label>Flicker:</label>
-                <input type="range" id="flickerSlider" min="0" max="10" step="1" value="0" />
+                <input type="range" id="flickerSlider" min="0" max="100" step="1" value="0" />
                 <span id="flickerValue">0%</span>
             </div>
             <div class="control-group">
@@ -258,6 +304,12 @@
             </div>
         </div>
     </div>
+
+    <!-- Message overlay for shared messages -->
+    <div id="messageOverlay" class="hidden">
+        <button id="messageButton">Click here to open your message</button>
+    </div>
+
     <canvas id="canvas"></canvas>
     <script>
         let canvas, ctx, font; let baseFontSize = 200, fontSize = 200, baselineY;
@@ -277,15 +329,10 @@
         let trailPoints = []; // Store fading trail points        let glowIntensity = 8;        let flickerProbability = 0;
         let backgroundMode = 'solid';
         let backgroundColor = '#001111';
-        let gradientColor = '#000033';
-        let isEnteringFullscreen = false; // Flag to prevent onResize interference
+        let gradientColor = '#000033'; let isEnteringFullscreen = false; // Flag to prevent onResize interference
         let globalAnimationStartTime = null; // Global animation timer for continuous jitter
 
-        // Fine-tune offset variables for all logarithmic sliders
-        let lmpFineTuneOffset = 0;
-        let jitterFreqFineTuneOffset = 0;
-        let glowFineTuneOffset = 0;
-        let flickerFineTuneOffset = 0; const pastelColors = [
+        const pastelColors = [
             '#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9',
             '#BAE1FF', '#D4BAFF', '#FFBAEF', '#FFCBA4',
             '#C7CEEA', '#FFD1DC', '#E6E6FA', '#F0E68C',
@@ -471,48 +518,18 @@
                 document.body.style.background = gradient;
                 canvas.style.background = gradient;
             }
-        }
-
-        let glowSliderValue = 5; // Track current slider position
-
-        function updateGlow() {
+        } function updateGlow() {
             const sliderValue = parseInt(document.getElementById('glowSlider').value);
 
-            // Logarithmic scale: 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024
-            const glowValues = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024];
-            const baseGlow = glowValues[sliderValue];
-
-            // Apply fine-tune offset (allow +/- one level)
-            let finalGlow = baseGlow;
-            if (glowFineTuneOffset !== 0) {
-                const currentIndex = sliderValue;
-                const targetIndex = Math.max(0, Math.min(glowValues.length - 1, currentIndex + glowFineTuneOffset));
-                const targetGlow = glowValues[targetIndex];
-                finalGlow = targetGlow;
-            } glowIntensity = finalGlow;
-            document.getElementById('glowValue').textContent = finalGlow.toString();
-        }
-
-        function updateFlicker() {
+            // Linear scale from 0 to 100% (0 to 100 pixel glow radius)
+            glowIntensity = sliderValue;
+            document.getElementById('glowValue').textContent = sliderValue + '%';
+        } function updateFlicker() {
             const sliderValue = parseInt(document.getElementById('flickerSlider').value);
 
-            // Logarithmic scale: 0, 1, 2, 4, 8, 16, 32, 64, 100, 200, 500 (percentages)
-            const flickerValues = [0, 1, 2, 4, 8, 16, 32, 64, 100, 200, 500];
-            const baseFlicker = flickerValues[sliderValue];
-
-            // Apply fine-tune offset (allow +/- one level)
-            let finalFlicker = baseFlicker;
-            if (flickerFineTuneOffset !== 0) {
-                const currentIndex = sliderValue;
-                const targetIndex = Math.max(0, Math.min(flickerValues.length - 1, currentIndex + flickerFineTuneOffset));
-                const targetFlicker = flickerValues[targetIndex];
-                finalFlicker = targetFlicker;
-            }
-
-            // Cap at 100% for display, but allow higher values for effect
-            flickerProbability = finalFlicker;
-            const displayValue = Math.min(finalFlicker, 100);
-            document.getElementById('flickerValue').textContent = displayValue + '%';
+            // Linear scale from 0 to 100%
+            flickerProbability = sliderValue;
+            document.getElementById('flickerValue').textContent = sliderValue + '%';
 
             // Start or stop flicker animation based on probability
             if (flickerProbability > 0) {
@@ -524,7 +541,7 @@
                     redrawCurrentState();
                 }
             }
-        }        // Function to calculate jitter offset based on distance along path
+        }// Function to calculate jitter offset based on distance along path
         function calculateJitter(distanceAlongPath, pointIndex = 0, totalPathLength = 100, letterIndex = 0, speedMultiplier = 1.0, pathDirection = null) {
             if (jitterAmount === 0) return { x: 0, y: 0 };
 
@@ -816,11 +833,63 @@
             const mode = document.getElementById('colorMode').value;
             const singleColor = document.getElementById('singleColor');
             singleColor.style.display = mode === 'single' ? 'inline' : 'none';
-        } function shareSettings() {
+        }
+        // Caesar cipher functions for message encryption/decryption
+        function caesarCipher(text, shift) {
+            return text.split('').map(char => {
+                const code = char.charCodeAt(0);
+
+                // Uppercase letters A-Z (65-90)
+                if (code >= 65 && code <= 90) {
+                    return String.fromCharCode(((code - 65 + shift) % 26) + 65);
+                }
+                // Lowercase letters a-z (97-122)
+                else if (code >= 97 && code <= 122) {
+                    return String.fromCharCode(((code - 97 + shift) % 26) + 97);
+                }
+                // Numbers 0-9 (48-57)
+                else if (code >= 48 && code <= 57) {
+                    return String.fromCharCode(((code - 48 + shift) % 10) + 48);
+                }
+                // Punctuation and special characters (32-47, 58-64, 91-96, 123-126)
+                else if ((code >= 32 && code <= 47) || (code >= 58 && code <= 64) ||
+                    (code >= 91 && code <= 96) || (code >= 123 && code <= 126)) {
+                    // Create array of all punctuation/special chars in printable ASCII range
+                    const punctuation = ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
+                    const index = punctuation.indexOf(char);
+                    if (index !== -1) {
+                        const newIndex = (index + shift) % punctuation.length;
+                        return punctuation[newIndex];
+                    }
+                }
+                // Return unchanged if not in our cipher ranges
+                return char;
+            }).join('');
+        }
+
+        function encryptMessage(text) {
+            if (!text) return text;
+            const ciphered = caesarCipher(text, 1); // Shift forward by 1
+            // Use Base64 encoding to ensure URL safety
+            return btoa(encodeURIComponent(ciphered));
+        }
+
+        function decryptMessage(text) {
+            if (!text) return text;
             try {
-                // Get all current settings
+                // Decode Base64 first, then decrypt
+                const decoded = decodeURIComponent(atob(text));
+                return caesarCipher(decoded, -1); // Shift backward by 1
+            } catch (e) {
+                console.warn('Failed to decrypt message, returning as-is:', e);
+                return text; // Return original if decryption fails
+            }
+        }
+        function shareSettings() {
+            try {                // Get all current settings
                 const settings = {
-                    text: document.getElementById('textInput').value,
+                    text: encryptMessage(document.getElementById('textInput').value),
+                    from: encryptMessage(document.getElementById('fromInput').value),
                     lpm: document.getElementById('lpmSlider').value,
                     scale: document.getElementById('zoomSlider').value,
                     lineOff: document.getElementById('lineOffMode').checked,
@@ -839,7 +908,8 @@
                     backgroundMode: document.getElementById('backgroundMode').value,
                     backgroundColor: document.getElementById('backgroundColor').value,
                     gradientColor: document.getElementById('gradientColor').value,
-                    fullscreenOnStart: document.getElementById('fullscreenOnStart').checked
+                    fullscreenOnStart: document.getElementById('fullscreenOnStart').checked,
+                    autoplay: 'true' // Add autoplay parameter to shared URLs
                 };
 
                 // Create URL with all parameters
@@ -852,11 +922,9 @@
                     }
                 });
 
-                const shareUrl = baseUrl + '?' + params.toString();
-
-                // Copy to clipboard
+                const shareUrl = baseUrl + '?' + params.toString();                // Copy to clipboard
                 navigator.clipboard.writeText(shareUrl).then(() => {
-                    alert('Settings URL copied to clipboard! Share this link to let others see the exact same configuration.');
+                    alert('Settings URL copied to clipboard! Share this link to let others see the exact same configuration and it will auto-start the animation.');
                 }).catch(err => {
                     // Fallback for older browsers
                     const textArea = document.createElement('textarea');
@@ -865,7 +933,7 @@
                     textArea.select();
                     document.execCommand('copy');
                     document.body.removeChild(textArea);
-                    alert('Settings URL copied to clipboard! Share this link to let others see the exact same configuration.');
+                    alert('Settings URL copied to clipboard! Share this link to let others see the exact same configuration and it will auto-start the animation.');
                 });
             } catch (error) {
                 console.error('Error sharing settings:', error);
@@ -873,41 +941,101 @@
             }
         } function enterFullscreen() {
             return new Promise((resolve) => {
-                if (!document.fullscreenElement) {
+                if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
                     isEnteringFullscreen = true;
-                    // Enter fullscreen
-                    document.documentElement.requestFullscreen().then(() => {
-                        // Hide controls in fullscreen
-                        document.getElementById('controls').style.display = 'none';
 
-                        // Wait for fullscreen transition and then manually resize
-                        setTimeout(() => {
-                            // Manually set canvas size since onResize might not work properly during transition
-                            canvas.width = window.innerWidth;
-                            canvas.height = window.innerHeight;
-                            baselineY = canvas.height * 0.5;
+                    // Try different fullscreen APIs for browser compatibility
+                    const docElement = document.documentElement;
+                    let fullscreenPromise;
 
+                    if (docElement.requestFullscreen) {
+                        fullscreenPromise = docElement.requestFullscreen();
+                    } else if (docElement.webkitRequestFullscreen) {
+                        fullscreenPromise = docElement.webkitRequestFullscreen();
+                    } else if (docElement.mozRequestFullScreen) {
+                        fullscreenPromise = docElement.mozRequestFullScreen();
+                    } else if (docElement.msRequestFullscreen) {
+                        fullscreenPromise = docElement.msRequestFullscreen();
+                    }
+
+                    if (fullscreenPromise) {
+                        fullscreenPromise.then(() => {
+                            // Hide controls in fullscreen
+                            document.getElementById('controls').style.display = 'none';
+
+                            // Wait for fullscreen transition and then manually resize
+                            setTimeout(() => {
+                                // Manually set canvas size since onResize might not work properly during transition
+                                canvas.width = window.innerWidth;
+                                canvas.height = window.innerHeight;
+                                baselineY = canvas.height * 0.5;
+
+                                isEnteringFullscreen = false;
+                                console.log('Fullscreen activated successfully, canvas size:', canvas.width, 'x', canvas.height);
+                                resolve();
+                            }, 300);
+                        }).catch(err => {
                             isEnteringFullscreen = false;
-                            console.log('Fullscreen activated successfully, canvas size:', canvas.width, 'x', canvas.height);
-                            resolve();
-                        }, 300);
-                    }).catch(err => {
+                            console.error('Error attempting to enable fullscreen:', err);
+                            alert('Fullscreen failed. This might be due to browser security restrictions. Please click the fullscreen button manually or try a different browser.');
+                            resolve(); // Continue even if fullscreen fails
+                        });
+                    } else {
+                        // Fallback: fullscreen not supported
                         isEnteringFullscreen = false;
-                        console.error('Error attempting to enable fullscreen:', err);
-                        resolve(); // Continue even if fullscreen fails
-                    });
+                        console.warn('Fullscreen API not supported');
+                        alert('Fullscreen is not supported in this browser. The animation will start in normal mode.');
+                        resolve();
+                    }
                 } else {
                     resolve(); // Already in fullscreen
                 }
             });
-        }
+        }        // Listen for fullscreen changes (ESC key, etc.) - handle all browser variants
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
-        // Listen for fullscreen changes (ESC key, etc.)
-        document.addEventListener('fullscreenchange', () => {
-            if (!document.fullscreenElement) {
+        function handleFullscreenChange() {
+            const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement ||
+                document.mozFullScreenElement || document.msFullscreenElement);
+
+            if (!isFullscreen) {
                 // Exited fullscreen
                 document.getElementById('controls').style.display = 'flex';
+                document.getElementById('fullscreenOnStart').checked = false;
                 onResize();
+            }
+        }
+
+        // Add keyboard event listener for F12 key to toggle fullscreen
+        document.addEventListener('keydown', function (event) {
+            // F12 key (keyCode 123 or key 'F12')
+            if (event.key === 'F12' || event.keyCode === 123) {
+                event.preventDefault(); // Prevent default F12 behavior (dev tools)
+
+                const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement ||
+                    document.mozFullScreenElement || document.msFullscreenElement);
+
+                if (isFullscreen) {
+                    // Exit fullscreen
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                } else {
+                    // Enter fullscreen
+                    document.getElementById('fullscreenOnStart').checked = true;
+                    enterFullscreen().catch(err => {
+                        console.error('F12 fullscreen failed:', err);
+                    });
+                }
             }
         }); function onResize() {
             // Don't interfere if we're in the middle of entering fullscreen
@@ -1722,11 +1850,124 @@
             // Get URL parameters after the ?
             const urlParams = new URLSearchParams(window.location.search);
 
+            // Check if this is a shared message (has URL parameters)
+            const hasUrlParams = window.location.search.length > 1;
+
             // Parse all settings from URL parameters
             const textParam = urlParams.get('text');
-            if (textParam) {
-                document.getElementById('textInput').value = decodeURIComponent(textParam);
-            }            // Parse slider and control values
+            const fromParam = urlParams.get('from'); if (hasUrlParams && textParam) {
+                // This is a shared message - show overlay and hide controls
+                document.getElementById('controls').style.display = 'none';
+                document.getElementById('messageOverlay').classList.remove('hidden');                // Decrypt the parameters for display
+                const decryptedText = decryptMessage(textParam);
+                const decryptedFrom = fromParam ? decryptMessage(fromParam) : null;
+
+                // Set up the message button text
+                const messageButton = document.getElementById('messageButton');
+                if (decryptedFrom) {
+                    messageButton.textContent = `You have a secret message from '${decryptedFrom}'`;
+                } else {
+                    messageButton.textContent = 'One new message...';
+                }
+
+                // Add click handler for message button
+                messageButton.onclick = async function () {
+                    // Hide the overlay
+                    document.getElementById('messageOverlay').classList.add('hidden');
+
+                    // Set all the parameters with decrypted values
+                    document.getElementById('textInput').value = decryptedText;
+                    if (decryptedFrom) {
+                        document.getElementById('fromInput').value = decryptedFrom;
+                    }
+
+                    // Parse all other settings
+                    parseAllSettings(urlParams);
+
+                    // Update displays
+                    updateAllDisplays(urlParams);
+
+                    // Enable fullscreen and start animation
+                    document.getElementById('fullscreenOnStart').checked = true;
+
+                    // Small delay then start animation
+                    setTimeout(() => {
+                        if (!isAnimating && !document.getElementById('startBtn').disabled) {
+                            toggleAnimation();
+                        }
+                    }, 500);
+                };
+
+                // Add ESC key handler to show controls
+                document.addEventListener('keydown', function escHandler(event) {
+                    if (event.key === 'Escape') {
+                        // Remove this specific handler
+                        document.removeEventListener('keydown', escHandler);
+
+                        // Exit fullscreen if in fullscreen
+                        if (document.fullscreenElement || document.webkitFullscreenElement ||
+                            document.mozFullScreenElement || document.msFullscreenElement) {
+                            if (document.exitFullscreen) {
+                                document.exitFullscreen();
+                            } else if (document.webkitExitFullscreen) {
+                                document.webkitExitFullscreen();
+                            } else if (document.mozCancelFullScreen) {
+                                document.mozCancelFullScreen();
+                            } else if (document.msExitFullscreen) {
+                                document.msExitFullscreen();
+                            }
+                        }
+
+                        // Show controls
+                        document.getElementById('controls').style.display = 'flex';
+
+                        // Stop animation if running
+                        if (isAnimating) {
+                            toggleAnimation();
+                        }
+                    }
+                });
+            } else {
+                // Normal mode - parse parameters if any but don't show overlay
+                if (textParam) {
+                    document.getElementById('textInput').value = decryptMessage(textParam);
+                }
+                if (fromParam) {
+                    document.getElementById('fromInput').value = decryptMessage(fromParam);
+                }
+
+                parseAllSettings(urlParams);
+
+                // Update all displays after parsing
+                setTimeout(async () => {
+                    updateAllDisplays(urlParams);
+
+                    // Normal autoplay logic for non-shared messages
+                    const autoplay = urlParams.get('autoplay');
+                    const hasUrlText = textParam || (!textParam && window.location.search.length > 1 && !window.location.search.includes('='));
+
+                    if (autoplay === 'true' || (hasUrlText && autoplay !== 'false')) {
+                        if (!isAnimating && !document.getElementById('startBtn').disabled) {
+                            document.getElementById('fullscreenOnStart').checked = true;
+                            setTimeout(() => {
+                                toggleAnimation();
+                            }, 500);
+                        }
+                    }
+                }, 100);
+            }
+
+            // Fallback for old-style URL parameters (everything after ? as text)
+            if (!textParam && window.location.search.length > 1) {
+                const queryString = window.location.search.substring(1);
+                if (!queryString.includes('=')) {
+                    document.getElementById('textInput').value = decodeURIComponent(queryString);
+                }
+            }
+        }
+
+        function parseAllSettings(urlParams) {
+            // Parse slider and control values
             const lpm = urlParams.get('lpm');
             if (lpm) document.getElementById('lpmSlider').value = lpm;
 
@@ -1734,7 +1975,9 @@
             if (scale) document.getElementById('zoomSlider').value = scale;
 
             const lineOff = urlParams.get('lineOff');
-            if (lineOff) document.getElementById('lineOffMode').checked = lineOff === 'true'; const trail = urlParams.get('trail');
+            if (lineOff) document.getElementById('lineOffMode').checked = lineOff === 'true';
+
+            const trail = urlParams.get('trail');
             if (trail) document.getElementById('trailSlider').value = trail;
 
             const dotSize = urlParams.get('dotSize');
@@ -1762,8 +2005,11 @@
             if (glow) document.getElementById('glowSlider').value = glow;
 
             const flicker = urlParams.get('flicker');
-            if (flicker) document.getElementById('flickerSlider').value = flicker; const lineSpacing = urlParams.get('lineSpacing');
+            if (flicker) document.getElementById('flickerSlider').value = flicker;
+
+            const lineSpacing = urlParams.get('lineSpacing');
             if (lineSpacing) document.getElementById('lineSpacingSlider').value = lineSpacing;
+
             const letterSpacing = urlParams.get('letterSpacing');
             if (letterSpacing) document.getElementById('letterSpacingSlider').value = letterSpacing;
 
@@ -1777,33 +2023,27 @@
             if (gradientColor) document.getElementById('gradientColor').value = gradientColor;
 
             const fullscreenOnStart = urlParams.get('fullscreenOnStart');
-            if (fullscreenOnStart) document.getElementById('fullscreenOnStart').checked = fullscreenOnStart === 'true';            // Update all displays after parsing
-            setTimeout(async () => {
-                updateLPM();
-                updateZoom();
-                updateGlow();
-                updateFlicker();
-                updateLineSpacing();
-                updateJitter();
-                updateJitterFrequency();
-                updateTrailLength();
-                updateBackgroundMode();
-                toggleColorMode();
+            if (fullscreenOnStart) document.getElementById('fullscreenOnStart').checked = fullscreenOnStart === 'true';
+        }
 
-                // Load font if it was specified in URL parameters
-                const font = urlParams.get('font');
-                if (font && font !== 'Patrick Hand') {
-                    document.getElementById('startBtn').disabled = true;
-                    await loadFont(font);
-                }
-            }, 100);
+        async function updateAllDisplays(urlParams) {
+            updateLPM();
+            updateZoom();
+            updateGlow();
+            updateFlicker();
+            updateLineSpacing();
+            updateLetterSpacing();
+            updateJitter();
+            updateJitterFrequency();
+            updateTrailLength();
+            updateBackgroundMode();
+            toggleColorMode();
 
-            // Fallback for old-style URL parameters (everything after ? as text)
-            if (!textParam && window.location.search.length > 1) {
-                const queryString = window.location.search.substring(1);
-                if (!queryString.includes('=')) {
-                    document.getElementById('textInput').value = decodeURIComponent(queryString);
-                }
+            // Load font if it was specified in URL parameters
+            const font = urlParams.get('font');
+            if (font && font !== 'Patrick Hand') {
+                document.getElementById('startBtn').disabled = true;
+                await loadFont(font);
             }
         }
 
