@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slow Handwriting Reveal</title>
+    <title>Zen Text</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Kalam:wght@400&family=Caveat:wght@400&family=Dancing+Script:wght@400&display=swap"
         rel="stylesheet">
@@ -472,7 +472,7 @@
     <div id="controls"> <!-- First Row: Text Input, Start/Share buttons, and Basic Controls -->
         <div class="control-row">
             <input id="textInput" placeholder="Paste text here or enter a URL..."
-                value="Watch the pen! Calm your mind! Slow Reader by sickfiction@gmail.com" />
+                value="Watch the pen... Calm your mind... Zen Text by sickfiction@gmail.com" />
             <input id="fromInput" placeholder="From (your name/email)" />
             <button id="startBtn" disabled>Start</button>
             <button id="shareBtn">Share</button>
@@ -830,7 +830,7 @@
         let zoomFactor = 1; let isAnimating = false;
         let lineOffMode = false;
         let trailLength = 2.0;
-        let dotSize = 5; // Dot size for drawing        let jitterAmount = 0;
+        let dotSize = 15; // Dot size for drawing        let jitterAmount = 0;
         let jitterFrequency = 16; // Default to 16 MPL (slider value 5)
         let jitterShape = 'sine';
         let pathJitterAmount = 0;
@@ -1219,13 +1219,13 @@
 
                 // Add tooltips for all gradient colors
                 if (i < 2) {
-                    element.title = 'Always enabled gradient color - click to change';
+                    element. = 'Always enabled gradient color - click to change';
                 }
 
                 // Add click handler for toggling (only for colors 3-6)
                 if (i >= 2) {
                     element.style.cursor = 'pointer';
-                    element.title = isEnabled ?
+                    element. = isEnabled ?
                         'Click to change color, right-click to disable' :
                         'Click to enable this gradient color';
 
