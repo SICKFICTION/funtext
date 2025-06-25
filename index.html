@@ -39,34 +39,165 @@
         }
 
         #controls {
-            padding: 12px;
+            padding: 4px;
             background: #002222;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             display: flex;
-            flex-direction: column;
-            gap: 8px;
+            flex-direction: row;
+            gap: 0;
             flex-shrink: 0;
-            /* Prevent controls from shrinking */
             max-width: 100%;
-            /* Prevent horizontal overflow */
             box-sizing: border-box;
-            /* Include padding in width calculations */
+            transition: all 0.3s ease;
+            height: auto;
+            min-height: 45px;
+            align-items: center;
+            justify-content: space-between;
         }
 
+        /* Menu Bar Styles */
+        .menu-bar {
+            display: flex;
+            gap: 0;
+            align-items: center;
+            flex: 1;
+        }
+
+        .menu-item {
+            position: relative;
+            display: inline-block;
+        }
+
+        .menu-label {
+            background: #003333;
+            color: #00aaaa;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid #004444;
+            border-right: none;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .menu-item:last-child .menu-label {
+            border-right: 1px solid #004444;
+        }
+
+        .menu-label:hover {
+            background: #004444;
+            color: #00cccc;
+        }
+
+        .menu-label.active {
+            background: #004444;
+            color: #00cccc;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: #001a1a;
+            min-width: 300px;
+            max-width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            top: 100%;
+            left: 0;
+            border: 1px solid #333;
+            border-radius: 0 0 4px 4px;
+            padding: 12px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        /* Adjust dropdown position for menu items that would go off screen */
+        .menu-item:nth-last-child(-n+3) .dropdown-content {
+            right: 0;
+            left: auto;
+        }
+
+        /* Main inputs in header */
+        .main-inputs {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex: 1;
+            margin: 0 12px;
+        }
+
+        .main-inputs input,
+        .main-inputs button {
+            height: 30px;
+            box-sizing: border-box;
+        }
+
+        #textInput {
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+            padding: 6px 8px;
+            font-size: 0.9rem;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: #003333;
+            color: #fff;
+        }
+
+        #fromInput {
+            width: 150px;
+            padding: 6px 8px;
+            font-size: 0.9rem;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: #003333;
+            color: #fff;
+        }
+
+        #startBtn,
+        #shareBtn {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: 1px solid #555;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        #startBtn {
+            background: #004444;
+            color: #fff;
+        }
+
+        #shareBtn {
+            background: #440044;
+            color: #fff;
+        }
+
+        #shareBtn:hover {
+            background: #660066;
+        }
+
+        /* Control styles within dropdowns */
         .control-row {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
             align-items: center;
+            margin-bottom: 8px;
             max-width: 100%;
-            /* Prevent horizontal overflow */
             box-sizing: border-box;
-            /* Include padding/margins in width calculations */
         }
 
-        .control-row:first-child {
-            border-bottom: 1px solid #333;
-            padding-bottom: 8px;
+        .control-row:last-child {
+            margin-bottom: 0;
         }
 
         #textInput {
@@ -159,6 +290,31 @@
             font-size: 0.8rem;
             color: #999;
             min-width: 50px;
+        }
+
+        /* Music control buttons */
+        #musicPlayPause,
+        #musicStop {
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            background: #004444;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 4px;
+            margin-right: 4px;
+        }
+
+        #musicPlayPause:hover,
+        #musicStop:hover {
+            background: #006666;
+        }
+
+        #musicPlayPause:disabled,
+        #musicStop:disabled {
+            background: #222;
+            color: #666;
+            cursor: not-allowed;
         }
 
         .jitter-group {
@@ -469,8 +625,9 @@
 </head>
 
 <body>
-    <div id="controls"> <!-- First Row: Text Input, Start/Share buttons, and Basic Controls -->
-        <div class="control-row">
+    <div id="controls">
+        <!-- Main inputs in header bar -->
+        <div class="main-inputs">
             <input id="textInput" placeholder="Paste text here or enter a URL..."
                 value="Watch the pen! Calm your mind! Zen Text by sickfiction@gmail.com" />
             <input id="fromInput" placeholder="From (your name/email)" />
@@ -487,204 +644,304 @@
                 <span id="zoomValue">300px</span>
             </div>
             <div class="control-group">
-                <label>Font:</label>
-                <select id="fontSelect">
-                    <option value="Patrick Hand">Patrick Hand</option>
-                    <option value="Kalam">Kalam</option>
-                    <option value="Handlee">Handlee</option>
-                    <option value="Lobster">Lobster</option>
-                    <option value="Architects Daughter">Architects Daughter</option>
-                    <option value="Indie Flower">Indie Flower</option>
-                    <option value="Amatic SC">Amatic SC</option>
-                    <option value="Righteous">Righteous</option>
-                    <option value="Pacifico">Pacifico</option>
-                    <option value="Courgette">Courgette</option>
-                    <option value="Great Vibes">Great Vibes</option>
-                </select>
-            </div>
-
-            <div class="control-group">
-                <label>Color:</label>
-                <select id="colorMode">
-                    <option value="pastel">Pastel</option>
-                    <option value="neon">Neon</option>
-                    <option value="single">Single</option>
-                </select>
-                <input type="color" id="singleColor" value="#ff69b4" style="display:none;" />
-            </div>
-        </div>
-
-        <!-- Second Row: Jitter Controls, Drawing Settings, and Background -->
-        <div class="control-row">
-            <div class="jitter-group">
-                <div class="control-group">
-                    <label>Jitter:</label>
-                    <input type="range" id="jitterSlider" min="0" max="20" step="0.5" value="0" />
-                    <span id="jitterValue">0.0</span>
-                </div>
-                <div class="control-group">
-                    <label>Freq:</label>
-                    <input type="range" id="jitterFreqSlider" min="0" max="100" step="0.1" value="16" />
-                    <span id="jitterFreqValue">16.0</span>
-                </div>
-                <div class="control-group">
-                    <label>Shape:</label>
-                    <select id="jitterShape">
-                        <option value="sine">Sine</option>
-                        <option value="cosine">Cosine</option>
-                        <option value="triangle">Triangle</option>
-                        <option value="square">Square</option>
-                        <option value="noise">Noise</option>
-                        <option value="abs-sine">Abs-Sine</option>
-                        <option value="sawtooth">Sawtooth</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="jitter-group">
-                <div class="control-group">
-                    <label>Path Jitter:</label>
-                    <input type="range" id="pathJitterSlider" min="0" max="20" step="0.5" value="0" />
-                    <span id="pathJitterValue">0.0</span>
-                </div>
-                <div class="control-group">
-                    <label>Freq:</label>
-                    <input type="range" id="pathJitterFreqSlider" min="0" max="100" step="0.1" value="16" />
-                    <span id="pathJitterFreqValue">16.0</span>
-                </div>
-                <div class="control-group">
-                    <label>Shape:</label>
-                    <select id="pathJitterShape">
-                        <option value="sine">Sine</option>
-                        <option value="cosine">Cosine</option>
-                        <option value="triangle">Triangle</option>
-                        <option value="square">Square</option>
-                        <option value="noise">Noise</option>
-                        <option value="abs-sine">Abs-Sine</option>
-                        <option value="sawtooth">Sawtooth</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label>
-                    <input type="checkbox" id="lineOffMode" />
-                    Dot Only
-                </label>
-            </div>
-
-            <div class="control-group">
-                <label>Dot Size:</label>
-                <input type="range" id="dotSizeSlider" min="5" max="30" step="1" value="11" />
-                <span id="dotSizeValue">11px</span>
-            </div>
-
-            <div class="control-group">
-                <label>Trail:</label>
-                <input type="range" id="trailSlider" min="0" max="2" step="0.1" value="2.0" />
-                <span id="trailValue">2.0s</span>
-            </div>
-            <div class="control-group">
-                <label>Glow:</label>
-                <input type="range" id="glowSlider" min="0" max="100" step="1" value="100" />
-                <span id="glowValue">100%</span>
-            </div>
-
-            <div class="control-group">
-                <label>Flicker:</label>
-                <input type="range" id="flickerSlider" min="0" max="100" step="1" value="0" />
-                <span id="flickerValue">0%</span>
-            </div>
-            <div class="control-group">
-                <label>Spacing:</label>
-                <input type="range" id="lineSpacingSlider" min="0" max="10" step="1" value="5" />
-                <span id="lineSpacingValue">300px</span>
-            </div>
-            <div class="control-group">
-                <label>Letter Gap:</label>
-                <input type="range" id="letterSpacingSlider" min="0" max="10" step="1" value="5" />
-                <span id="letterSpacingValue">1.0x</span>
-            </div>
-
-            <div class="control-group">
-                <label>Layout:</label>
-                <select id="layoutMode">
-                    <option value="wrap">Wrap</option>
-                    <option value="ticker">Ticker</option>
-                </select>
-            </div>
-
-            <div class="control-group">
-                <label>Align:</label>
-                <select id="textAlignment">
-                    <option value="left">Left</option>
-                    <option value="center">Center</option>
-                    <option value="right">Right</option>
-                    <option value="justify">Justify</option>
-                </select>
-            </div>
-
-            <div class="control-group">
-                <label>Weight:</label>
-                <select id="fontWeight">
-                    <option value="light">Light</option>
-                    <option value="normal">Normal</option>
-                    <option value="bold">Bold</option>
-                    <option value="heavy">Heavy</option>
-                </select>
-            </div>
-
-            <div class="control-group">
-                <label>Style:</label>
-                <select id="fontStyle">
-                    <option value="normal">Normal</option>
-                    <option value="italic">Italic</option>
-                </select>
-            </div>
-            <div class="control-group">
-                <label>Background:</label>
-                <select id="backgroundMode">
-                    <option value="solid">Solid</option>
-                    <option value="linear">Linear</option>
-                    <option value="radial">Radial</option>
-                    <option value="conic">Conic</option>
-                    <option value="cycling">Cycling</option>
-                    <option value="boomerang">Boomerang</option>
-                </select>
-                <input type="color" id="backgroundColor" value="#000000" />
-            </div>
-
-            <div class="control-group" id="gradientControls" style="display:none;">
-                <label>Angle:</label>
-                <input type="range" id="gradientAngle" min="0" max="360" step="1" value="135" />
-                <span id="gradientAngleValue">135°</span>
-                <label>Colors:</label>
-                <input type="color" id="gradientColor1" value="#000033" />
-                <input type="color" id="gradientColor2" value="#001122" />
-                <input type="color" id="gradientColor3" value="#002211" />
-                <input type="color" id="gradientColor4" value="#112200" />
-                <input type="color" id="gradientColor5" value="#220011" />
-                <input type="color" id="gradientColor6" value="#110022" />
-            </div>
-
-            <div class="control-group">
-                <label>Fill:</label>
-                <select id="fillMode">
-                    <option value="none">None</option>
-                    <option value="same">Same as Outline</option>
-                    <option value="custom">Custom</option>
-                    <option value="neon">Neon Random</option>
-                    <option value="pastel">Pastel Random</option>
-                    <option value="cycling">Color Cycling</option>
-                </select>
-                <input type="color" id="fillColor" value="#ff69b4" style="display:none;" />
-            </div>
-
-            <div class="control-group">
                 <label>
                     <input type="checkbox" id="fullscreenOnStart" />
                     Fullscreen
                 </label>
+            </div>
+        </div>
+
+        <!-- Menu Bar -->
+        <div class="menu-bar">
+            <div class="menu-item">
+                <div class="menu-label">Font & Text</div>
+                <div class="dropdown-content">
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label>Font:</label>
+                            <select id="fontSelect">
+                                <option value="Patrick Hand">Patrick Hand</option>
+                                <option value="Kalam">Kalam</option>
+                                <option value="Handlee">Handlee</option>
+                                <option value="Lobster">Lobster</option>
+                                <option value="Architects Daughter">Architects Daughter</option>
+                                <option value="Indie Flower">Indie Flower</option>
+                                <option value="Amatic SC">Amatic SC</option>
+                                <option value="Righteous">Righteous</option>
+                                <option value="Pacifico">Pacifico</option>
+                                <option value="Courgette">Courgette</option>
+                                <option value="Great Vibes">Great Vibes</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Weight:</label>
+                            <select id="fontWeight">
+                                <option value="light">Light</option>
+                                <option value="normal">Normal</option>
+                                <option value="bold">Bold</option>
+                                <option value="heavy">Heavy</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Style:</label>
+                            <select id="fontStyle">
+                                <option value="normal">Normal</option>
+                                <option value="italic">Italic</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label>Layout:</label>
+                            <select id="layoutMode">
+                                <option value="wrap">Wrap</option>
+                                <option value="ticker">Ticker</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Align:</label>
+                            <select id="textAlignment">
+                                <option value="left">Left</option>
+                                <option value="center">Center</option>
+                                <option value="right">Right</option>
+                                <option value="justify">Justify</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label>Spacing:</label>
+                            <input type="range" id="lineSpacingSlider" min="0" max="10" step="1" value="5" />
+                            <span id="lineSpacingValue">300px</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Letter Gap:</label>
+                            <input type="range" id="letterSpacingSlider" min="0" max="10" step="1" value="5" />
+                            <span id="letterSpacingValue">1.0x</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-label">Colors</div>
+                <div class="dropdown-content">
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label>Color:</label>
+                            <select id="colorMode">
+                                <option value="pastel">Pastel</option>
+                                <option value="neon">Neon</option>
+                                <option value="single">Single</option>
+                            </select>
+                            <input type="color" id="singleColor" value="#ff69b4" style="display:none;" />
+                        </div>
+                        <div class="control-group">
+                            <label>Fill:</label>
+                            <select id="fillMode">
+                                <option value="none">None</option>
+                                <option value="same">Same as Outline</option>
+                                <option value="custom">Custom</option>
+                                <option value="neon">Neon Random</option>
+                                <option value="pastel">Pastel Random</option>
+                                <option value="cycling">Color Cycling</option>
+                            </select>
+                            <input type="color" id="fillColor" value="#ff69b4" style="display:none;" />
+                        </div>
+                    </div>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label>Glow:</label>
+                            <input type="range" id="glowSlider" min="0" max="100" step="1" value="100" />
+                            <span id="glowValue">100%</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Flicker:</label>
+                            <input type="range" id="flickerSlider" min="0" max="100" step="1" value="0" />
+                            <span id="flickerValue">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-label">Drawing</div>
+                <div class="dropdown-content">
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label>
+                                <input type="checkbox" id="lineOffMode" />
+                                Dot Only
+                            </label>
+                        </div>
+                        <div class="control-group">
+                            <label>Dot Size:</label>
+                            <input type="range" id="dotSizeSlider" min="5" max="30" step="1" value="11" />
+                            <span id="dotSizeValue">11px</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Trail:</label>
+                            <input type="range" id="trailSlider" min="0" max="2" step="0.1" value="2.0" />
+                            <span id="trailValue">2.0s</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-label">Effects</div>
+                <div class="dropdown-content">
+                    <div class="control-row">
+                        <div class="jitter-group">
+                            <div class="control-group">
+                                <label>Jitter:</label>
+                                <input type="range" id="jitterSlider" min="0" max="20" step="0.5" value="0" />
+                                <span id="jitterValue">0.0</span>
+                            </div>
+                            <div class="control-group">
+                                <label>Freq:</label>
+                                <input type="range" id="jitterFreqSlider" min="0" max="100" step="0.1" value="16" />
+                                <span id="jitterFreqValue">16.0</span>
+                            </div>
+                            <div class="control-group">
+                                <label>Shape:</label>
+                                <select id="jitterShape">
+                                    <option value="sine">Sine</option>
+                                    <option value="cosine">Cosine</option>
+                                    <option value="triangle">Triangle</option>
+                                    <option value="square">Square</option>
+                                    <option value="noise">Noise</option>
+                                    <option value="abs-sine">Abs-Sine</option>
+                                    <option value="sawtooth">Sawtooth</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control-row">
+                        <div class="jitter-group">
+                            <div class="control-group">
+                                <label>Path Jitter:</label>
+                                <input type="range" id="pathJitterSlider" min="0" max="20" step="0.5" value="0" />
+                                <span id="pathJitterValue">0.0</span>
+                            </div>
+                            <div class="control-group">
+                                <label>Freq:</label>
+                                <input type="range" id="pathJitterFreqSlider" min="0" max="100" step="0.1" value="16" />
+                                <span id="pathJitterFreqValue">16.0</span>
+                            </div>
+                            <div class="control-group">
+                                <label>Shape:</label>
+                                <select id="pathJitterShape">
+                                    <option value="sine">Sine</option>
+                                    <option value="cosine">Cosine</option>
+                                    <option value="triangle">Triangle</option>
+                                    <option value="square">Square</option>
+                                    <option value="noise">Noise</option>
+                                    <option value="abs-sine">Abs-Sine</option>
+                                    <option value="sawtooth">Sawtooth</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-label">Music</div>
+                <div class="dropdown-content">
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label>Background Music:</label>
+                            <select id="musicSelect">
+                                <option value="">None</option>
+                                <option value="8 Bit Game.mp3">8 Bit Game</option>
+                                <option value="60s Spies.mp3">60s Spies</option>
+                                <option value="70s TV Show.mp3">70s TV Show</option>
+                                <option value="80s Hiphop.mp3">80s Hiphop</option>
+                                <option value="ALIEN ROBOTS.mp3">Alien Robots</option>
+                                <option value="ATMOSPHERE.mp3">Atmosphere</option>
+                                <option value="Blade Rider.mp3">Blade Rider</option>
+                                <option value="Chill Hop Synth.mp3">Chill Hop Synth</option>
+                                <option value="CREEPY.mp3">Creepy</option>
+                                <option value="CYBERPUNK.mp3">Cyberpunk</option>
+                                <option value="DIVE BAR.mp3">Dive Bar</option>
+                                <option value="Dixie Jazz.mp3">Dixie Jazz</option>
+                                <option value="Eastern.mp3">Eastern</option>
+                                <option value="Efficiency.mp3">Efficiency</option>
+                                <option value="Electric Cloud.mp3">Electric Cloud</option>
+                                <option value="Geektastic.mp3">Geektastic</option>
+                                <option value="Hawaiiain.mp3">Hawaiian</option>
+                                <option value="JANGLY AMERICAN GUITAR.mp3">Jangly American Guitar</option>
+                                <option value="Jerry.mp3">Jerry</option>
+                                <option value="Keep On Truckin.mp3">Keep On Truckin</option>
+                                <option value="La France.mp3">La France</option>
+                                <option value="Oceans 17.mp3">Oceans 17</option>
+                                <option value="Oldskool.mp3">Oldskool</option>
+                                <option value="Ragtime.mp3">Ragtime</option>
+                                <option value="Road Trip Acoustic.mp3">Road Trip Acoustic</option>
+                                <option value="Sad Guitar.mp3">Sad Guitar</option>
+                                <option value="Sneaky.mp3">Sneaky</option>
+                                <option value="Surfin Canadia.mp3">Surfin Canada</option>
+                                <option value="War Heroes.mp3">War Heroes</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label>Volume:</label>
+                            <input type="range" id="musicVolume" min="0" max="100" step="1" value="50" />
+                            <span id="musicVolumeValue">50%</span>
+                        </div>
+                        <div class="control-group">
+                            <label>
+                                <input type="checkbox" id="musicLoop" checked />
+                                Loop
+                            </label>
+                        </div>
+                    </div>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <button id="musicPlayPause" disabled>Play</button>
+                            <button id="musicStop" disabled>Stop</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-label">Background</div>
+                <div class="dropdown-content">
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label>Background:</label>
+                            <select id="backgroundMode">
+                                <option value="solid">Solid</option>
+                                <option value="linear">Linear</option>
+                                <option value="radial">Radial</option>
+                                <option value="conic">Conic</option>
+                                <option value="cycling">Cycling</option>
+                                <option value="boomerang">Boomerang</option>
+                            </select>
+                            <input type="color" id="backgroundColor" value="#000000" />
+                        </div>
+                    </div>
+                    <div class="control-row" id="gradientControls" style="display:none;">
+                        <div class="control-group">
+                            <label>Angle:</label>
+                            <input type="range" id="gradientAngle" min="0" max="360" step="1" value="135" />
+                            <span id="gradientAngleValue">135°</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Colors:</label>
+                            <input type="color" id="gradientColor1" value="#000033" />
+                            <input type="color" id="gradientColor2" value="#001122" />
+                            <input type="color" id="gradientColor3" value="#002211" />
+                            <input type="color" id="gradientColor4" value="#112200" />
+                            <input type="color" id="gradientColor5" value="#220011" />
+                            <input type="color" id="gradientColor6" value="#110022" />
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -760,6 +1017,23 @@
                 </ul>
                 <div class="tip">🎨 Start with 2 colors, then click to add more gradient colors for complex effects!
                 </div>
+            </div>
+
+            <div class="feature">
+                <h3>🎵 Background Music</h3>
+                <ul>
+                    <li><strong>Music Selection:</strong> Choose from 29 different background tracks including 8-bit,
+                        jazz, ambient, and more</li>
+                    <li><strong>Auto-Play:</strong> Music automatically starts when you click "Start" or view a shared
+                        message</li>
+                    <li><strong>Volume Control:</strong> Adjust music volume from 0-100%</li>
+                    <li><strong>Loop Option:</strong> Choose whether music repeats continuously</li>
+                    <li><strong>Playback Controls:</strong> Play, pause, and stop music independently of the text
+                        animation</li>
+                    <li><strong>Sharing:</strong> Music selection is included when you share your Zen Text creation</li>
+                </ul>
+                <div class="tip">🎧 Try different music styles to match the mood of your text - ambient for meditation,
+                    upbeat for motivation!</div>
             </div>
 
             <div class="feature">
@@ -851,6 +1125,12 @@
         let fontStyle = 'normal';
         let mainAnimationId = null; // Main animation timeout ID
 
+        // Music variables
+        let currentMusic = null; // Current audio element
+        let musicVolume = 0.5; // Default volume (50%)
+        let musicLoop = true; // Default loop enabled
+        let isPlaying = false; // Track play state
+
         const pastelColors = [
             '#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9',
             '#BAE1FF', '#D4BAFF', '#FFBAEF', '#FFCBA4',
@@ -864,7 +1144,57 @@
             '#0040FF', '#FF4000', '#00FF40', '#4000FF',
             '#FF0000', '#00FF00', '#0000FF', '#FFFF00',
             '#FF00FF', '#00FFFF', '#FF8080', '#80FF80'
-        ]; async function init() {
+        ];
+
+        function initializeDropdownMenus() {
+            const menuLabels = document.querySelectorAll('.menu-label');
+
+            // Add click event listeners to menu labels
+            menuLabels.forEach(label => {
+                label.addEventListener('click', function (e) {
+                    e.stopPropagation();
+
+                    const menuItem = this.parentElement;
+                    const dropdown = menuItem.querySelector('.dropdown-content');
+                    const wasOpen = dropdown.classList.contains('show');
+
+                    // Close all other dropdowns
+                    document.querySelectorAll('.dropdown-content').forEach(d => {
+                        d.classList.remove('show');
+                    });
+                    document.querySelectorAll('.menu-label').forEach(l => {
+                        l.classList.remove('active');
+                    });
+
+                    // Toggle current dropdown
+                    if (!wasOpen) {
+                        dropdown.classList.add('show');
+                        this.classList.add('active');
+                    }
+                });
+            });
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function (e) {
+                if (!e.target.closest('.menu-item')) {
+                    document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+                        dropdown.classList.remove('show');
+                    });
+                    document.querySelectorAll('.menu-label').forEach(label => {
+                        label.classList.remove('active');
+                    });
+                }
+            });
+
+            // Prevent dropdown from closing when clicking inside it
+            document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+                dropdown.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                });
+            });
+        }
+
+        async function init() {
             canvas = document.getElementById('canvas');
             ctx = canvas.getContext('2d');
             window.addEventListener('resize', onResize);
@@ -907,7 +1237,19 @@
             document.getElementById('shareBtn').addEventListener('click', shareSettings);
             document.getElementById('layoutMode').addEventListener('change', updateLayoutMode);
             document.getElementById('textAlignment').addEventListener('change', updateTextAlignment);
-            document.getElementById('fontWeight').addEventListener('change', updateFontWeight); document.getElementById('fontStyle').addEventListener('change', updateFontStyle); updateLPM();
+            document.getElementById('fontWeight').addEventListener('change', updateFontWeight); document.getElementById('fontStyle').addEventListener('change', updateFontStyle);
+
+            // Music event listeners
+            document.getElementById('musicSelect').addEventListener('change', updateMusicSelection);
+            document.getElementById('musicVolume').addEventListener('input', updateMusicVolume);
+            document.getElementById('musicLoop').addEventListener('change', updateMusicLoop);
+            document.getElementById('musicPlayPause').addEventListener('click', toggleMusicPlayPause);
+            document.getElementById('musicStop').addEventListener('click', stopMusic);
+
+            // Initialize dropdown menus
+            initializeDropdownMenus();
+
+            updateLPM();
             updateZoom();
             updateDotSize();
             updateJitter();
@@ -930,6 +1272,10 @@
             updateBackgroundMode(); // This will show/hide gradient controls
             updateGradientColorVisibility();
             updateBackgroundColor();
+
+            // Initialize music controls
+            updateMusicVolume();
+            updateMusicLoop();
         }
 
         function setInitialFontSize() {
@@ -1005,9 +1351,20 @@
                 trailPoints = []; // Clear trail points
                 stopFlickerAnimation(); // Stop flicker animation if running
                 stopTickerAnimation(); // Stop ticker animation if running
+
+                // Stop music when animation stops
+                if (currentMusic && isPlaying) {
+                    stopMusic();
+                }
             } else {
                 // Start animation
                 trailPoints = []; // Clear trail points before starting
+
+                // Start music if selected and not already playing
+                if (currentMusic && !isPlaying) {
+                    toggleMusicPlayPause();
+                }
+
                 await startReveal();
             }
         } function updateLPM() {
@@ -1141,6 +1498,91 @@
 
             // Convert back to hex
             return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+        }
+
+        // Music Functions
+        function updateMusicSelection() {
+            const selectedMusic = document.getElementById('musicSelect').value;
+
+            // Stop current music if playing
+            if (currentMusic) {
+                currentMusic.pause();
+                currentMusic = null;
+                isPlaying = false;
+                updatePlayPauseButton();
+            }
+
+            // Enable/disable control buttons
+            const hasMusic = selectedMusic !== '';
+            document.getElementById('musicPlayPause').disabled = !hasMusic;
+            document.getElementById('musicStop').disabled = !hasMusic;
+
+            if (hasMusic) {
+                // Create new audio element
+                currentMusic = new Audio(selectedMusic);
+                currentMusic.volume = musicVolume;
+                currentMusic.loop = musicLoop;
+
+                // Add event listeners
+                currentMusic.addEventListener('ended', function () {
+                    if (!musicLoop) {
+                        isPlaying = false;
+                        updatePlayPauseButton();
+                    }
+                });
+
+                currentMusic.addEventListener('error', function () {
+                    console.error('Error loading music file:', selectedMusic);
+                    alert('Could not load music file. Please check that the file exists.');
+                });
+            }
+        }
+
+        function updateMusicVolume() {
+            const value = document.getElementById('musicVolume').value;
+            musicVolume = parseFloat(value) / 100;
+            document.getElementById('musicVolumeValue').textContent = value + '%';
+
+            if (currentMusic) {
+                currentMusic.volume = musicVolume;
+            }
+        }
+
+        function updateMusicLoop() {
+            musicLoop = document.getElementById('musicLoop').checked;
+            if (currentMusic) {
+                currentMusic.loop = musicLoop;
+            }
+        }
+
+        function toggleMusicPlayPause() {
+            if (!currentMusic) return;
+
+            if (isPlaying) {
+                currentMusic.pause();
+                isPlaying = false;
+            } else {
+                currentMusic.play().catch(function (error) {
+                    console.error('Error playing music:', error);
+                    alert('Could not play music. Please try again.');
+                });
+                isPlaying = true;
+            }
+            updatePlayPauseButton();
+        }
+
+        function stopMusic() {
+            if (currentMusic) {
+                currentMusic.pause();
+                currentMusic.currentTime = 0;
+                isPlaying = false;
+                updatePlayPauseButton();
+            }
+        }
+
+        function updatePlayPauseButton() {
+            const button = document.getElementById('musicPlayPause');
+            button.textContent = isPlaying ? 'Pause' : 'Play';
         }
 
         function updateBackgroundMode() {
@@ -1701,14 +2143,16 @@
                     layoutText += word + ' ';
                     x += wordWidth + (font.charToGlyph(' ').advanceWidth * (fontSize / font.unitsPerEm) * letterSpacing);
                 }
-            }            // Now create letter data with proper positioning
-            x = margin;
-            y = baselineY;
-            currentLine = 0;
+            }            // Precalculate line widths and starting positions for alignment
+            const lines = [];
+            let currentLineChars = [];
+            let currentLineWidth = 0;
+            let lineIndex = 0;
 
+            // First pass: calculate line widths
+            let tempX = margin;
             for (let i = 0; i < layoutText.length; i++) {
                 const ch = layoutText[i];
-
                 const glyph = font.charToGlyph(ch) || font.charToGlyph(' ');
                 const w = glyph.advanceWidth * (fontSize / font.unitsPerEm) * letterSpacing;
 
@@ -1726,16 +2170,113 @@
                         nextWordWidth += nextGlyph.advanceWidth * (fontSize / font.unitsPerEm) * letterSpacing;
                     }
 
-                    if (x + nextWordWidth > canvas.width - margin) {
-                        x = margin;
-                        y += lineHeight;
-                        currentLine++;
-                        // Still add the space to letterData but at line start position
-                        // We'll handle this properly in the rendering
+                    if (tempX + nextWordWidth > canvas.width - margin) {
+                        // End current line
+                        lines.push({
+                            chars: currentLineChars,
+                            width: currentLineWidth,
+                            lineIndex: lineIndex
+                        });
+
+                        // Start new line
+                        currentLineChars = [];
+                        currentLineWidth = 0;
+                        tempX = margin;
+                        lineIndex++;
                     }
                 }
 
-                const path = glyph.getPath(x, y, fontSize);
+                currentLineChars.push({
+                    char: ch,
+                    width: w,
+                    charIndex: i
+                });
+                currentLineWidth += w;
+                tempX += w;
+            }
+
+            // Add the last line
+            if (currentLineChars.length > 0) {
+                lines.push({
+                    chars: currentLineChars,
+                    width: currentLineWidth,
+                    lineIndex: lineIndex
+                });
+            }
+
+            // Calculate starting X position for each line based on alignment
+            lines.forEach(line => {
+                if (layoutMode === 'ticker') {
+                    line.startX = margin;
+                } else {
+                    switch (textAlignment) {
+                        case 'center':
+                            const availableWidth = canvas.width - 2 * margin;
+                            line.startX = margin + Math.max(0, (availableWidth - line.width) / 2);
+                            break;
+                        case 'right':
+                            line.startX = Math.max(margin, canvas.width - line.width - margin);
+                            break;
+                        case 'justify':
+                            line.startX = margin;
+                            // Calculate extra spacing for justify (except last line)
+                            if (line.lineIndex < lines.length - 1) {
+                                const spaceCount = line.chars.filter(c => c.char === ' ').length;
+                                if (spaceCount > 0) {
+                                    const availableWidth = canvas.width - 2 * margin;
+                                    const extraSpace = Math.max(0, availableWidth - line.width);
+                                    line.extraSpacePerSpace = extraSpace / spaceCount;
+                                } else {
+                                    line.extraSpacePerSpace = 0;
+                                }
+                            } else {
+                                line.extraSpacePerSpace = 0; // Don't justify last line
+                            }
+                            break;
+                        default: // left
+                            line.startX = margin;
+                            break;
+                    }
+                }
+            });
+
+            // Now create letter data with proper positioning
+            x = margin;
+            y = baselineY;
+            currentLine = 0;
+            let currentLineData = lines[0];
+            let charIndexInLine = 0;
+            let extraSpaceAccumulated = 0;
+
+            for (let i = 0; i < layoutText.length; i++) {
+                const ch = layoutText[i];
+
+                // Check if we've moved to a new line
+                if (currentLineData && charIndexInLine >= currentLineData.chars.length) {
+                    currentLine++;
+                    if (currentLine < lines.length) {
+                        currentLineData = lines[currentLine];
+                        charIndexInLine = 0;
+                        extraSpaceAccumulated = 0;
+                        x = currentLineData.startX;
+                        y += lineHeight;
+                    }
+                }
+
+                // Set initial position for first character of each line
+                if (charIndexInLine === 0 && currentLineData) {
+                    x = currentLineData.startX;
+                }
+
+                const glyph = font.charToGlyph(ch) || font.charToGlyph(' ');
+                const w = glyph.advanceWidth * (fontSize / font.unitsPerEm) * letterSpacing;
+
+                // Add extra space for justify alignment
+                if (textAlignment === 'justify' && currentLineData && currentLineData.extraSpacePerSpace && ch === ' ') {
+                    extraSpaceAccumulated += currentLineData.extraSpacePerSpace;
+                }
+
+                const path = glyph.getPath(x + extraSpaceAccumulated, y, fontSize);
                 const pts = samplePathWithCornerDetection(path.commands);
 
                 // Create Path2D object for filled rendering
@@ -1776,7 +2317,7 @@
                     char: ch,
                     pts: pts,
                     path: path2D,
-                    x: x,
+                    x: x + extraSpaceAccumulated,
                     y: y,
                     line: currentLine,
                     color: color,
@@ -1787,6 +2328,7 @@
                 });
 
                 x += w;
+                charIndexInLine++;
             }
 
             console.log('Created letterData array with', letterData.length, 'letters');
@@ -1938,15 +2480,15 @@
 
                 // Uppercase letters A-Z (65-90)
                 if (code >= 65 && code <= 90) {
-                    return String.fromCharCode(((code - 65 + shift) % 26) + 65);
+                    return String.fromCharCode(((code - 65 + shift + 26) % 26) + 65);
                 }
                 // Lowercase letters a-z (97-122)
                 else if (code >= 97 && code <= 122) {
-                    return String.fromCharCode(((code - 97 + shift) % 26) + 97);
+                    return String.fromCharCode(((code - 97 + shift + 26) % 26) + 97);
                 }
                 // Numbers 0-9 (48-57)
                 else if (code >= 48 && code <= 57) {
-                    return String.fromCharCode(((code - 48 + shift) % 10) + 48);
+                    return String.fromCharCode(((code - 48 + shift + 10) % 10) + 48);
                 }
                 // Punctuation and special characters (32-47, 58-64, 91-96, 123-126)
                 else if ((code >= 32 && code <= 47) || (code >= 58 && code <= 64) ||
@@ -1955,7 +2497,7 @@
                     const punctuation = ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
                     const index = punctuation.indexOf(char);
                     if (index !== -1) {
-                        const newIndex = (index + shift) % punctuation.length;
+                        const newIndex = (index + shift + punctuation.length) % punctuation.length;
                         return punctuation[newIndex];
                     }
                 }
@@ -2083,15 +2625,19 @@
             const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement ||
                 document.mozFullScreenElement || document.msFullscreenElement);
 
+            const controls = document.getElementById('controls');
+
             if (!isFullscreen) {
                 // Exited fullscreen
-                document.getElementById('controls').style.display = 'flex';
+                controls.style.display = 'flex';
                 document.getElementById('fullscreenSpeedSlider').classList.remove('show');
                 document.getElementById('fullscreenOnStart').checked = false;
+
                 onResize();
             } else {
                 // Entered fullscreen
                 document.getElementById('fullscreenSpeedSlider').classList.add('show');
+
                 // Apply gradient background immediately
                 updateBackgroundColor();
             }
@@ -2139,10 +2685,11 @@
             canvas.width = window.innerWidth;
 
             // Check if we're in fullscreen mode
+            const controls = document.getElementById('controls');
             if (document.fullscreenElement) {
                 canvas.height = window.innerHeight;
             } else {
-                canvas.height = window.innerHeight - document.getElementById('controls').offsetHeight;
+                canvas.height = window.innerHeight - controls.offsetHeight;
             }
 
             // Improved baseline calculation for better centering
@@ -2337,6 +2884,20 @@
                 document.getElementById('fullscreenOnStart').checked = urlParams.get('fullscreenOnStart') === 'true';
             }
 
+            // Parse music settings
+            if (urlParams.has('musicSelect')) {
+                document.getElementById('musicSelect').value = urlParams.get('musicSelect');
+                updateMusicSelection();
+            }
+            if (urlParams.has('musicVolume')) {
+                document.getElementById('musicVolume').value = urlParams.get('musicVolume');
+                updateMusicVolume();
+            }
+            if (urlParams.has('musicLoop')) {
+                document.getElementById('musicLoop').checked = urlParams.get('musicLoop') === 'true';
+                updateMusicLoop();
+            }
+
             // Update gradient color visibility first, then background color after ALL parameters are loaded
             updateGradientColorVisibility();
             updateBackgroundColor();
@@ -2412,6 +2973,10 @@
                 fillMode: document.getElementById('fillMode').value,
                 fillColor: document.getElementById('fillColor').value,
                 fullscreenOnStart: document.getElementById('fullscreenOnStart').checked,
+                // Add music settings
+                musicSelect: document.getElementById('musicSelect').value,
+                musicVolume: document.getElementById('musicVolume').value,
+                musicLoop: document.getElementById('musicLoop').checked,
                 autoplay: 'true'
             };
         }
@@ -2445,7 +3010,9 @@
             } else {
                 stopFlickerAnimation();
             }
-        } function setupAdvancedSliderInteraction() {
+        }
+
+        function setupAdvancedSliderInteraction() {
             // This function can be used to add advanced interactions to sliders
             // For now, it's just a placeholder
             console.log('Advanced slider interaction setup complete');
@@ -2559,92 +3126,155 @@
                     x += w;
                 }
             } else {
-                // Wrap mode with alignment - improve vertical centering for large text
+                // Wrap mode with alignment - use same logic as startReveal
                 const lines = [];
-                let currentLineLetters = [];
+                let currentLineChars = [];
                 let currentLineWidth = 0;
+                let lineIndex = 0;
 
-                // Group letters into lines
+                // First pass: calculate line widths (same as startReveal)
+                let tempX = margin;
                 for (let i = 0; i < letterData.length; i++) {
                     const ch = letterData[i].char;
                     const glyph = font.charToGlyph(ch) || font.charToGlyph(' ');
                     const w = glyph.advanceWidth * (fontSize / font.unitsPerEm) * letterSpacing;
 
-                    // Check if we need to wrap to next line
-                    if (currentLineWidth + w > canvas.width - 2 * margin && ch !== ' ' && currentLineLetters.length > 0) {
-                        lines.push({
-                            letters: currentLineLetters,
-                            width: currentLineWidth,
-                            lineNum: lines.length
-                        });
-                        currentLineLetters = [];
-                        currentLineWidth = 0;
-                    }                    // Handle spaces at beginning of line
-                    if (ch === ' ' && currentLineLetters.length === 0) {
-                        // Give spaces empty points but still include them
-                        letterData[i].pts = [];
-                        letterData[i].x = margin;
-                        // Improved baseline calculation for better centering
-                        const adjustedBaselineY = fontSize > 250 ?
-                            canvas.height / 2 + fontSize * 0.3 :
-                            baselineY + fontSize * 0.1;
-                        letterData[i].y = adjustedBaselineY + lines.length * lineHeight;
-                        letterData[i].line = lines.length;
-                        // Continue to next character without adding to line
-                        continue;
+                    // Check if we need to wrap
+                    if (ch === ' ') {
+                        // Look ahead to see if next word fits
+                        let nextWordEnd = i + 1;
+                        while (nextWordEnd < letterData.length && letterData[nextWordEnd].char !== ' ') {
+                            nextWordEnd++;
+                        }
+
+                        let nextWordWidth = 0;
+                        for (let j = i + 1; j < nextWordEnd; j++) {
+                            const nextGlyph = font.charToGlyph(letterData[j].char) || font.charToGlyph(' ');
+                            nextWordWidth += nextGlyph.advanceWidth * (fontSize / font.unitsPerEm) * letterSpacing;
+                        }
+
+                        if (tempX + nextWordWidth > canvas.width - margin) {
+                            // End current line
+                            lines.push({
+                                chars: currentLineChars,
+                                width: currentLineWidth,
+                                lineIndex: lineIndex
+                            });
+
+                            // Start new line
+                            currentLineChars = [];
+                            currentLineWidth = 0;
+                            tempX = margin;
+                            lineIndex++;
+                        }
                     }
 
-                    currentLineLetters.push({
-                        index: i,
+                    currentLineChars.push({
                         char: ch,
                         width: w,
-                        glyph: glyph
+                        charIndex: i
                     });
                     currentLineWidth += w;
+                    tempX += w;
                 }
 
-                // Add final line
-                if (currentLineLetters.length > 0) {
+                // Add the last line
+                if (currentLineChars.length > 0) {
                     lines.push({
-                        letters: currentLineLetters,
+                        chars: currentLineChars,
                         width: currentLineWidth,
-                        lineNum: lines.length
+                        lineIndex: lineIndex
                     });
                 }
 
-                // Position letters with alignment and improved centering
-                for (const line of lines) {
-                    const alignmentOffset = getAlignmentOffset(line.width, canvas.width);
-                    let extraSpace = 0;
+                // Calculate starting X position for each line based on alignment
+                lines.forEach(line => {
+                    switch (textAlignment) {
+                        case 'center':
+                            const availableWidth = canvas.width - 2 * margin;
+                            line.startX = margin + Math.max(0, (availableWidth - line.width) / 2);
+                            break;
+                        case 'right':
+                            line.startX = Math.max(margin, canvas.width - line.width - margin);
+                            break;
+                        case 'justify':
+                            line.startX = margin;
+                            // Calculate extra spacing for justify (except last line)
+                            if (line.lineIndex < lines.length - 1) {
+                                const spaceCount = line.chars.filter(c => c.char === ' ').length;
+                                if (spaceCount > 0) {
+                                    const availableWidth = canvas.width - 2 * margin;
+                                    const extraSpace = Math.max(0, availableWidth - line.width);
+                                    line.extraSpacePerSpace = extraSpace / spaceCount;
+                                } else {
+                                    line.extraSpacePerSpace = 0;
+                                }
+                            } else {
+                                line.extraSpacePerSpace = 0; // Don't justify last line
+                            }
+                            break;
+                        default: // left
+                            line.startX = margin;
+                            break;
+                    }
+                });
 
-                    // Calculate extra space for justify
-                    if (textAlignment === 'justify' && line.letters.length > 1 && line.lineNum < lines.length - 1) {
-                        const totalAvailableWidth = canvas.width - 2 * margin;
-                        extraSpace = (totalAvailableWidth - line.width) / (line.letters.length - 1);
+                // Now update letter positions
+                let currentLineData = lines[0];
+                let charIndexInLine = 0;
+                let extraSpaceAccumulated = 0;
+
+                for (let i = 0; i < letterData.length; i++) {
+                    const ch = letterData[i].char;
+
+                    // Check if we've moved to a new line
+                    if (currentLineData && charIndexInLine >= currentLineData.chars.length) {
+                        const nextLineIndex = currentLineData.lineIndex + 1;
+                        if (nextLineIndex < lines.length) {
+                            currentLineData = lines[nextLineIndex];
+                            charIndexInLine = 0;
+                            extraSpaceAccumulated = 0;
+                        }
                     }
 
-                    x = margin + alignmentOffset;
-                    // Improved baseline calculation for better centering with large text
+                    const glyph = font.charToGlyph(ch) || font.charToGlyph(' ');
+                    const w = glyph.advanceWidth * (fontSize / font.unitsPerEm) * letterSpacing;
+
+                    // Add extra space for justify alignment
+                    if (textAlignment === 'justify' && currentLineData && currentLineData.extraSpacePerSpace && ch === ' ') {
+                        extraSpaceAccumulated += currentLineData.extraSpacePerSpace;
+                    }
+
+                    // Calculate position
+                    let newX, newY;
+                    if (currentLineData && charIndexInLine === 0) {
+                        newX = currentLineData.startX;
+                    } else if (currentLineData) {
+                        newX = currentLineData.startX + currentLineData.chars.slice(0, charIndexInLine).reduce((sum, c) => sum + c.width, 0) + extraSpaceAccumulated;
+                    } else {
+                        newX = margin;
+                    }
+
+                    // Improved baseline calculation for better centering
                     const adjustedBaselineY = fontSize > 250 ?
                         canvas.height / 2 + fontSize * 0.3 :
                         baselineY + fontSize * 0.1;
-                    y = adjustedBaselineY + line.lineNum * lineHeight;
+                    newY = adjustedBaselineY + (currentLineData ? currentLineData.lineIndex : 0) * lineHeight;
 
-                    for (const letterInfo of line.letters) {
-                        const path = letterInfo.glyph.getPath(x, y, fontSize);
-                        let pts = samplePathWithCornerDetection(path.commands);
+                    const path = glyph.getPath(newX, newY, fontSize);
+                    let pts = samplePathWithCornerDetection(path.commands);
 
-                        // Apply italic transform if needed
-                        pts = applyItalicTransform(pts);
+                    // Apply italic transform if needed
+                    pts = applyItalicTransform(pts);
 
-                        // Update letter data while preserving drawing progress
-                        letterData[letterInfo.index].pts = pts;
-                        letterData[letterInfo.index].x = x;
-                        letterData[letterInfo.index].y = y;
-                        letterData[letterInfo.index].line = line.lineNum;
-                        // Preserve currentPointIndex and drawingComplete
-                        x += letterInfo.width + extraSpace;
-                    }
+                    // Update letter data while preserving drawing progress
+                    letterData[i].pts = pts;
+                    letterData[i].x = newX;
+                    letterData[i].y = newY;
+                    letterData[i].line = currentLineData ? currentLineData.lineIndex : 0;
+                    // Preserve currentPointIndex and drawingComplete
+
+                    charIndexInLine++;
                 }
             }
 
