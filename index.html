@@ -581,13 +581,13 @@
 
             <div class="control-group">
                 <label>Trail:</label>
-                <input type="range" id="trailSlider" min="0" max="2" step="0.1" value="0" />
-                <span id="trailValue">0.0s</span>
+                <input type="range" id="trailSlider" min="0" max="2" step="0.1" value="2.0" />
+                <span id="trailValue">2.0s</span>
             </div>
             <div class="control-group">
                 <label>Glow:</label>
-                <input type="range" id="glowSlider" min="0" max="100" step="1" value="8" />
-                <span id="glowValue">8%</span>
+                <input type="range" id="glowSlider" min="0" max="100" step="1" value="100" />
+                <span id="glowValue">100%</span>
             </div>
 
             <div class="control-group">
@@ -752,12 +752,14 @@
                     <li><strong>Gradient:</strong> Create beautiful color transitions</li>
                     <li><strong>Color Cycling:</strong> Watch colors smoothly change over time</li>
                     <li><strong>Boomerang:</strong> Colors expand and contract from center like breathing</li>
-                    <li><strong>Gradient Colors:</strong> The first two colors are always active. Colors 3-6 start disabled (grayed out)</li>
+                    <li><strong>Gradient Colors:</strong> The first two colors are always active. Colors 3-6 start
+                        disabled (grayed out)</li>
                     <li><strong>Enable Colors:</strong> Click on grayed out colors to enable them</li>
                     <li><strong>Change Colors:</strong> Click on active colors to pick new colors</li>
                     <li><strong>Disable Colors:</strong> Right-click on active colors to disable them</li>
                 </ul>
-                <div class="tip">🎨 Start with 2 colors, then click to add more gradient colors for complex effects!</div>
+                <div class="tip">🎨 Start with 2 colors, then click to add more gradient colors for complex effects!
+                </div>
             </div>
 
             <div class="feature">
@@ -827,14 +829,14 @@
         let letterSpacing = 1.0; // Letter spacing multiplier
         let zoomFactor = 1; let isAnimating = false;
         let lineOffMode = false;
-        let trailLength = 0;
+        let trailLength = 2.0;
         let dotSize = 5; // Dot size for drawing        let jitterAmount = 0;
         let jitterFrequency = 16; // Default to 16 MPL (slider value 5)
         let jitterShape = 'sine';
         let pathJitterAmount = 0;
         let pathJitterFrequency = 16; // Default to 16 MPL
         let pathJitterShape = 'sine';
-        let trailPoints = []; // Store fading trail points        let glowIntensity = 8;        let flickerProbability = 0;        let backgroundMode = 'solid';
+        let trailPoints = []; // Store fading trail points        let glowIntensity = 100;        let flickerProbability = 0;        let backgroundMode = 'solid';
         let backgroundColor = '#001111';
         let gradientColors = ['#000033', '#001122', '#002211', '#112200', '#220011', '#110022'];
         let gradientAngle = 135;
@@ -966,7 +968,7 @@
                 const resp = await fetch(fontUrls[fontName]);
                 const buf = await resp.arrayBuffer();
                 const newFont = opentype.parse(buf);
-                
+
                 // Validate that the font loaded correctly and has the expected name
                 if (newFont && newFont.names && newFont.names.fontFamily) {
                     font = newFont;
@@ -1126,16 +1128,16 @@
             const r1 = parseInt(color1.slice(1, 3), 16);
             const g1 = parseInt(color1.slice(3, 5), 16);
             const b1 = parseInt(color1.slice(5, 7), 16);
-            
+
             const r2 = parseInt(color2.slice(1, 3), 16);
             const g2 = parseInt(color2.slice(3, 5), 16);
             const b2 = parseInt(color2.slice(5, 7), 16);
-            
+
             // Interpolate
             const r = Math.round(r1 + (r2 - r1) * t);
             const g = Math.round(g1 + (g2 - g1) * t);
             const b = Math.round(b1 + (b2 - b1) * t);
-            
+
             // Convert back to hex
             return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
         }
@@ -1198,7 +1200,7 @@
             for (let i = 0; i < colorInputs.length; i++) {
                 const element = colorInputs[i];
                 let isEnabled = element.getAttribute('data-enabled') === 'true';
-                
+
                 // Force first two colors to always be enabled
                 if (i < 2) {
                     isEnabled = true;
@@ -1218,13 +1220,13 @@
                 // Add tooltips for all gradient colors
                 if (i < 2) {
                     element.title = 'Always enabled gradient color - click to change';
-                } 
+                }
 
                 // Add click handler for toggling (only for colors 3-6)
                 if (i >= 2) {
                     element.style.cursor = 'pointer';
-                    element.title = isEnabled ? 
-                        'Click to change color, right-click to disable' : 
+                    element.title = isEnabled ?
+                        'Click to change color, right-click to disable' :
                         'Click to enable this gradient color';
 
                     // Remove any existing event listeners to prevent duplicates
@@ -1235,16 +1237,16 @@
                     // Create new click handler and store reference for removal
                     element._clickHandler = function (e) {
                         const currentEnabled = element.getAttribute('data-enabled') === 'true';
-                        
+
                         if (!currentEnabled) {
                             // First click: Enable the color
                             e.preventDefault();
                             e.stopPropagation();
-                            
+
                             element.setAttribute('data-enabled', 'true');
                             element.style.opacity = '1';
                             element.style.border = '2px solid #555';
-                            
+
                             // Update background immediately
                             updateBackgroundColor();
                         }
@@ -1255,13 +1257,13 @@
                     element._rightClickHandler = function (e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        
+
                         const currentEnabled = element.getAttribute('data-enabled') === 'true';
                         if (currentEnabled) {
                             element.setAttribute('data-enabled', 'false');
                             element.style.opacity = '0.3';
                             element.style.border = '2px solid #222';
-                            
+
                             // Update background immediately
                             updateBackgroundColor();
                         }
@@ -1335,7 +1337,8 @@
                 const colorStops = gradientColors.map((color, index) =>
                     `${color} ${(index * 360 / gradientColors.length)}deg`
                 ).join(', ');
-                backgroundValue = `conic-gradient(from ${gradientAngle}deg at center, ${colorStops})`;            } else if (backgroundMode === 'cycling') {
+                backgroundValue = `conic-gradient(from ${gradientAngle}deg at center, ${colorStops})`;
+            } else if (backgroundMode === 'cycling') {
                 // Cycling mode: expanding rings with smooth color transitions from center
                 const speed = gradientAngle * 2 / 360; // Map 0-360 to 0-2 cycles per second
                 const timeScale = performance.now() / 1000 * speed; // Convert to seconds and apply speed
@@ -1348,34 +1351,34 @@
                     const ringSpacing = 3; // Pixels between each ring
                     const maxRadius = Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height) / 2;
                     const totalRings = Math.ceil(maxRadius / ringSpacing);
-                    
+
                     // Time-based animation - each ring is born at center and expands
                     const animationTime = timeScale * 100; // Scale for ring creation rate
-                    
+
                     const colorStops = [];
-                    
+
                     // Generate rings from center outward
                     for (let ring = 0; ring < totalRings; ring++) {
                         const ringRadius = ring * ringSpacing;
                         const ringBirthTime = animationTime - ring; // When this ring was "born"
-                        
+
                         if (ringBirthTime >= 0) {
                             // Determine which color phase this ring is in
                             const colorCycle = ringBirthTime / 50; // Adjust speed of color transition
                             const colorProgress = colorCycle % totalColors;
-                            
+
                             const currentColorIndex = Math.floor(colorProgress) % totalColors;
                             const nextColorIndex = (currentColorIndex + 1) % totalColors;
                             const blend = colorProgress - Math.floor(colorProgress);
-                            
+
                             // Interpolate between current and next color
                             const currentColor = gradientColors[currentColorIndex];
                             const nextColor = gradientColors[nextColorIndex];
                             const ringColor = interpolateColors(currentColor, nextColor, blend);
-                            
+
                             // Convert radius to percentage
                             const radiusPercent = Math.min((ringRadius / maxRadius) * 100, 100);
-                            
+
                             if (radiusPercent <= 100) {
                                 colorStops.push({
                                     color: ringColor,
@@ -1384,19 +1387,19 @@
                             }
                         }
                     }
-                    
+
                     // Sort by radius
                     colorStops.sort((a, b) => a.radius - b.radius);
-                    
+
                     // Build gradient string
-                    const gradientStops = colorStops.map(stop => 
+                    const gradientStops = colorStops.map(stop =>
                         `${stop.color} ${stop.radius.toFixed(1)}%`);
-                    
+
                     // Ensure we have a center point
                     if (gradientStops.length === 0) {
                         gradientStops.push(`${gradientColors[0]} 0%`);
                     }
-                    
+
                     backgroundValue = `radial-gradient(circle at center, ${gradientStops.join(', ')})`;
                 }
             } else if (backgroundMode === 'boomerang') {
@@ -1406,7 +1409,7 @@
 
                 const totalColors = gradientColors.length;
                 const cycle = timeScale % 1; // 0 to 1 cycle
-                
+
                 // Simple breathing/boomerang effect
                 let expansionFactor;
                 if (cycle < 0.5) {
@@ -1416,24 +1419,24 @@
                     // Second half: contract from 1 to 0 (100% back to 0%)
                     expansionFactor = 2 - (cycle * 2); // 1 to 0
                 }
-                
+
                 const colorStops = [];
-                
+
                 // Create expanding gradient with all colors
                 for (let i = 0; i < totalColors; i++) {
                     // Each color gets a position in the gradient
                     const basePosition = (i / (totalColors - 1)) * 100; // 0% to 100%
                     const expandedPosition = basePosition * expansionFactor;
-                    
+
                     colorStops.push(`${gradientColors[i]} ${expandedPosition.toFixed(1)}%`);
                 }
-                
+
                 // Ensure final color extends to current expansion limit
                 if (expansionFactor > 0) {
                     const finalPosition = 100 * expansionFactor;
                     colorStops[colorStops.length - 1] = `${gradientColors[totalColors - 1]} ${finalPosition.toFixed(1)}%`;
                 }
-                
+
                 backgroundValue = `radial-gradient(circle at center, ${colorStops.join(', ')})`;
             }
             document.body.style.background = backgroundValue;
@@ -2679,8 +2682,7 @@
                         ctx.shadowColor = point.color;
                         ctx.shadowBlur = glowIntensity * alpha;
                         ctx.beginPath();
-                        ctx.arc(point.x - xScrollOffset, point.y - yScrollOffset,
-                            dotSize * alpha * 0.8, 0, 2 * Math.PI);
+                        ctx.arc(point.x, point.y, dotSize * alpha * 0.8, 0, 2 * Math.PI);
                         ctx.fill();
                         ctx.restore();
                     }
@@ -2865,7 +2867,8 @@
                             } else if (fillMode === 'neon') {
                                 fillColorToUse = neonColors[i % neonColors.length];
                             } else if (fillMode === 'pastel') {
-                                fillColorToUse = pastelColors[i % pastelColors.length];
+                                // Use a different offset for pastel fills to get different colors
+                                fillColorToUse = pastelColors[(i + 7) % pastelColors.length];
                             } else if (fillMode === 'cycling') {
                                 const colorIndex = (i + Math.floor(currentTime / 200)) % (neonColors.length + pastelColors.length);
                                 fillColorToUse = colorIndex < neonColors.length ?
@@ -2945,11 +2948,11 @@
                                 const penX = currentPoint.x - xScrollOffset;
                                 const penY = currentPoint.y - yScrollOffset;
 
-                                // Add to trail if trail is enabled
+                                // Add to trail if trail is enabled - store screen coordinates (already offset)
                                 if (trailLength > 0) {
                                     trailPoints.push({
-                                        x: currentPoint.x,
-                                        y: currentPoint.y,
+                                        x: penX,
+                                        y: penY,
                                         color: letter.color,
                                         timestamp: performance.now()
                                     });
