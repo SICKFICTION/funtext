@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zen Text</title>
+    <title>ZenText</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Kalam:wght@400&family=Caveat:wght@400&family=Dancing+Script:wght@400&display=swap"
         rel="stylesheet">
@@ -472,7 +472,7 @@
     <div id="controls"> <!-- First Row: Text Input, Start/Share buttons, and Basic Controls -->
         <div class="control-row">
             <input id="textInput" placeholder="Paste text here or enter a URL..."
-                value="Watch the pen... Calm your mind... Zen Text by sickfiction@gmail.com" />
+                value="Watch the pen! Calm your mind! Zen Text by sickfiction@gmail.com" />
             <input id="fromInput" placeholder="From (your name/email)" />
             <button id="startBtn" disabled>Start</button>
             <button id="shareBtn">Share</button>
@@ -575,8 +575,8 @@
 
             <div class="control-group">
                 <label>Dot Size:</label>
-                <input type="range" id="dotSizeSlider" min="5" max="30" step="1" value="15" />
-                <span id="dotSizeValue">15px</span>
+                <input type="range" id="dotSizeSlider" min="5" max="30" step="1" value="11" />
+                <span id="dotSizeValue">11px</span>
             </div>
 
             <div class="control-group">
@@ -651,7 +651,7 @@
                     <option value="cycling">Cycling</option>
                     <option value="boomerang">Boomerang</option>
                 </select>
-                <input type="color" id="backgroundColor" value="#001111" />
+                <input type="color" id="backgroundColor" value="#000000" />
             </div>
 
             <div class="control-group" id="gradientControls" style="display:none;">
@@ -696,11 +696,11 @@
     <div id="helpModal">
         <div class="help-content">
             <button id="helpCloseButton" title="Close">×</button>
-            <h2>🌟 Slow Reader - Help & Instructions 🌟</h2>
+            <h2>🌟 Zen Text - Help & Instructions 🌟</h2>
 
             <div class="feature">
-                <h3>✨ What is Slow Reader?</h3>
-                <p>Slow Reader helps you focus and read more carefully by displaying text one letter at a time with
+                <h3>✨ What is Zen Text?</h3>
+                <p>Zen Text helps you focus and read more carefully by displaying text one letter at a time with
                     beautiful handwriting animation. Perfect for kids learning to read, adults who want to slow down and
                     focus, or anyone who wants to enjoy text in a new way!</p>
             </div>
@@ -793,8 +793,8 @@
             </div>
 
             <div class="donation-section">
-                <h3>💖 Support Slow Reader</h3>
-                <p>If you enjoy Slow Reader and find it helpful, consider supporting its development!</p>
+                <h3>💖 Support Zen Text</h3>
+                <p>If you enjoy Zen Text and find it helpful, consider supporting its development!</p>
                 <p>Every donation helps keep this project free and helps me create more useful tools.</p>
                 <a href="https://www.paypal.com/paypalme/jamesmulvale" target="_blank" class="donation-link">
                     🎁 Support via PayPal
@@ -830,7 +830,8 @@
         let zoomFactor = 1; let isAnimating = false;
         let lineOffMode = false;
         let trailLength = 2.0;
-        let dotSize = 15; // Dot size for drawing        let jitterAmount = 0;
+        let dotSize = 11; // Dot size for drawing
+        let jitterAmount = 0;
         let jitterFrequency = 16; // Default to 16 MPL (slider value 5)
         let jitterShape = 'sine';
         let pathJitterAmount = 0;
@@ -1219,13 +1220,13 @@
 
                 // Add tooltips for all gradient colors
                 if (i < 2) {
-                    element. = 'Always enabled gradient color - click to change';
+                    element.title = 'Always enabled gradient color - click to change';
                 }
 
                 // Add click handler for toggling (only for colors 3-6)
                 if (i >= 2) {
                     element.style.cursor = 'pointer';
-                    element. = isEnabled ?
+                    element.title = isEnabled ?
                         'Click to change color, right-click to disable' :
                         'Click to enable this gradient color';
 
