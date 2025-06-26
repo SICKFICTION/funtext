@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ZenText</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Kalam:wght@400&family=Caveat:wght@400&family=Dancing+Script:wght@400&display=swap"
@@ -36,6 +37,19 @@
             color: #fff;
             overflow: hidden;
             /* Prevent scrollbars */
+
+            /* Prevent text shrinking on mobile */
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+
+            /* Improve touch behavior */
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         #controls {
@@ -159,6 +173,11 @@
             border-radius: 4px;
             background: #f5f3e8;
             color: #2d2d1f;
+
+            /* Prevent text shrinking */
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
         }
 
         #startBtn,
@@ -223,6 +242,50 @@
 
         .control-group input[type="range"] {
             width: 80px;
+
+            /* Better mobile touch interaction */
+            -webkit-appearance: none;
+            appearance: none;
+            height: 20px;
+            background: transparent;
+            outline: none;
+        }
+
+        /* Style the range slider track */
+        .control-group input[type="range"]::-webkit-slider-track {
+            width: 100%;
+            height: 4px;
+            background: #ddd;
+            border-radius: 2px;
+        }
+
+        .control-group input[type="range"]::-moz-range-track {
+            width: 100%;
+            height: 4px;
+            background: #ddd;
+            border-radius: 2px;
+            border: none;
+        }
+
+        /* Style the range slider thumb */
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #a5a587;
+            cursor: pointer;
+            border: 2px solid #8b8b70;
+        }
+
+        .control-group input[type="range"]::-moz-range-thumb {
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #a5a587;
+            cursor: pointer;
+            border: 2px solid #8b8b70;
         }
 
         .control-group select,
@@ -234,6 +297,22 @@
             border-radius: 4px;
             font-size: 0.85rem;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+
+            /* Improve touch targets */
+            min-height: 32px;
+            min-width: 32px;
+        }
+
+        /* Allow text selection in input fields */
+        input[type="text"],
+        input[type="url"],
+        textarea,
+        select {
+            -webkit-user-select: text;
+            -khtml-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
         }
 
         /* Gradient color inputs with click-to-toggle styling */
@@ -298,6 +377,11 @@
             display: block;
             /* background: #001111; */
             /* Removed - will be set by JavaScript */
+
+            /* Ensure canvas text doesn't get browser-adjusted */
+            -webkit-text-size-adjust: none;
+            -ms-text-size-adjust: none;
+            text-size-adjust: none;
         }
 
         /* Fullscreen speed slider */
@@ -340,23 +424,358 @@
 
         /* Mobile responsive adjustments */
         @media (max-width: 768px) {
+
+            /* Prevent text from shrinking and ensure proper scaling */
+            html {
+                -webkit-text-size-adjust: 100%;
+                -ms-text-size-adjust: 100%;
+                text-size-adjust: 100%;
+            }
+
+            body {
+                -webkit-text-size-adjust: 100%;
+                -ms-text-size-adjust: 100%;
+                text-size-adjust: 100%;
+            }
+
+            /* Make controls more touch-friendly */
+            #controls {
+                padding: 6px 4px;
+                min-height: 50px;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+            }
+
+            /* Improve main inputs layout on mobile */
+            .main-inputs {
+                flex-wrap: wrap;
+                gap: 4px;
+                margin: 0 6px;
+                justify-content: flex-start;
+            }
+
+            .main-inputs input,
+            .main-inputs button {
+                height: 36px;
+                font-size: 0.9rem;
+                padding: 6px 10px;
+                min-width: 80px;
+            }
+
+            #fromInput {
+                width: 140px;
+                font-size: 0.9rem;
+            }
+
+            #startBtn,
+            #shareBtn {
+                padding: 6px 14px;
+                font-size: 0.9rem;
+                min-width: 70px;
+                font-weight: 600;
+            }
+
+            /* Make menu bar more mobile-friendly */
+            .menu-bar {
+                flex-wrap: wrap;
+                gap: 0;
+            }
+
+            .menu-label {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+                min-height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                white-space: nowrap;
+            }
+
+            /* Improve dropdown positioning and sizing for mobile */
+            .dropdown-content {
+                min-width: 280px;
+                max-width: 95vw;
+                left: 0;
+                right: auto;
+                max-height: 60vh;
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+
+            /* Auto-adjust dropdown position for items that would go off screen */
+            .menu-item:nth-last-child(-n+2) .dropdown-content {
+                right: 0;
+                left: auto;
+            }
+
+            /* Better control spacing on mobile */
+            .control-row {
+                gap: 6px;
+                margin-bottom: 10px;
+                flex-wrap: wrap;
+            }
+
+            .control-group {
+                gap: 4px;
+                flex-wrap: wrap;
+                align-items: center;
+                min-width: 120px;
+            }
+
+            .control-group label {
+                font-size: 0.9rem;
+                font-weight: 600;
+                white-space: nowrap;
+                min-width: 60px;
+            }
+
+            .control-group input[type="range"] {
+                width: 90px;
+                min-width: 90px;
+            }
+
+            .control-group select {
+                font-size: 0.9rem;
+                padding: 6px;
+                min-width: 80px;
+            }
+
+            .control-group span {
+                font-size: 0.85rem;
+                min-width: 45px;
+                font-weight: 500;
+            }
+
+            /* Larger touch targets for mobile */
+            input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                margin-right: 6px;
+            }
+
+            input[type="color"] {
+                width: 36px;
+                height: 36px;
+                padding: 0;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            /* Music control buttons - bigger for mobile */
+            #musicPlayPause,
+            #musicStop {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+                margin-right: 6px;
+                min-width: 60px;
+                font-weight: 600;
+            }
+
+            /* Jitter group improvements */
+            .jitter-group {
+                padding: 6px 10px;
+                margin: 4px 0;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            /* Gradient controls for mobile */
+            #gradientControls {
+                padding: 6px 10px;
+                gap: 6px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            #gradientControls input[type="color"] {
+                width: 32px;
+                height: 32px;
+            }
+
+            #gradientControls input[type="range"] {
+                width: 80px;
+            }
+
+            /* Fullscreen speed slider adjustments */
             #fullscreenSpeedSlider {
                 bottom: 10px;
                 right: 10px;
-                padding: 8px 12px;
+                padding: 10px 14px;
+                border-radius: 6px;
             }
 
             #fullscreenSpeedSlider label {
-                font-size: 0.7rem;
+                font-size: 0.85rem;
+                font-weight: 600;
             }
 
             #fullscreenSpeedSlider input[type="range"] {
-                width: 60px;
+                width: 80px;
             }
 
             #fullscreenSpeedSlider span {
+                font-size: 0.8rem;
+                min-width: 50px;
+                font-weight: 500;
+            }
+
+            /* Help button adjustments */
+            #helpButton {
+                width: 55px;
+                height: 55px;
+                bottom: 15px;
+                right: 15px;
+                font-size: 1.6rem;
+            }
+
+            /* Message overlay improvements */
+            #messageButton {
+                padding: 16px 32px;
+                font-size: 1.1rem;
+                max-width: 85%;
+                line-height: 1.3;
+                font-weight: 600;
+            }
+
+            /* Text area improvements for mobile */
+            #detachedTextArea {
+                width: 180px;
+                height: 40px;
+                top: 6px;
+                right: 6px;
+            }
+
+            #detachedTextArea.expanded {
+                width: 300px;
+                height: 140px;
+                top: 70px;
+                right: 15px;
+                max-width: 85vw;
+                max-height: 45vh;
+            }
+
+            .text-area-header {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+                height: 32px;
+                font-weight: 600;
+            }
+
+            #textAreaToggle {
+                width: 18px;
+                height: 18px;
                 font-size: 0.7rem;
-                min-width: 40px;
+            }
+
+            #detachedTextArea.expanded #textAreaToggle {
+                width: 20px;
+                height: 20px;
+                font-size: 0.75rem;
+            }
+
+            #mainTextInput {
+                font-size: 0.9rem;
+                padding: 6px;
+            }
+
+            #detachedTextArea.expanded #mainTextInput {
+                font-size: 0.95rem;
+                padding: 8px;
+            }
+        }
+
+        /* Portrait phone specific adjustments */
+        @media (max-width: 480px) and (orientation: portrait) {
+            #controls {
+                padding: 4px 2px;
+                min-height: 45px;
+            }
+
+            .main-inputs {
+                margin: 0 4px;
+                gap: 3px;
+            }
+
+            .main-inputs input,
+            .main-inputs button {
+                height: 32px;
+                font-size: 0.85rem;
+                padding: 4px 8px;
+            }
+
+            #fromInput {
+                width: 120px;
+            }
+
+            .menu-label {
+                padding: 6px 8px;
+                font-size: 0.8rem;
+                min-height: 32px;
+            }
+
+            .dropdown-content {
+                min-width: 260px;
+                max-width: 98vw;
+                max-height: 55vh;
+                padding: 8px;
+            }
+
+            .control-group {
+                min-width: 100px;
+            }
+
+            .control-group label {
+                font-size: 0.85rem;
+                min-width: 50px;
+            }
+
+            .control-group input[type="range"] {
+                width: 80px;
+                min-width: 80px;
+            }
+
+            input[type="color"] {
+                width: 32px;
+                height: 32px;
+            }
+
+            #detachedTextArea {
+                width: 160px;
+                height: 36px;
+            }
+
+            #detachedTextArea.expanded {
+                width: 280px;
+                height: 120px;
+                max-width: 90vw;
+                max-height: 40vh;
+            }
+        }
+
+        /* Landscape phone specific adjustments */
+        @media (max-width: 768px) and (orientation: landscape) {
+            #controls {
+                padding: 3px 4px;
+                min-height: 42px;
+            }
+
+            .main-inputs {
+                gap: 4px;
+                margin: 0 6px;
+            }
+
+            .menu-label {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+                min-height: 30px;
+            }
+
+            .dropdown-content {
+                max-height: 65vh;
+            }
+
+            #detachedTextArea.expanded {
+                max-height: 50vh;
             }
         }
 
@@ -1288,6 +1707,14 @@
         let backgroundImageUrl = ''; // Background image/video URL
         let backgroundMedia = null; // Background media element (img or video)
 
+        // URL sharing mode variable
+        let isUrlFontMode = false; // Track if font was loaded from URL parameters
+
+        // Manual scrolling variables
+        let manualScrollOffsetX = 0; // Manual horizontal scroll for ticker mode
+        let manualScrollOffsetY = 0; // Manual vertical scroll for wrap mode
+        let lastAutoScrollTime = 0; // Track when automatic scroll last occurred
+
         const pastelColors = [
             '#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9',
             '#BAE1FF', '#D4BAFF', '#FFBAEF', '#FFCBA4',
@@ -1363,7 +1790,45 @@
             // Set initial font size based on screen size
             setInitialFontSize();
 
-            await loadFont('Patrick Hand');
+            // Get the font name from URL parameters or use default
+            const urlParams = new URLSearchParams(window.location.search);
+            const fontFromUrl = urlParams.get('font');
+            const fontToLoad = fontFromUrl || 'Patrick Hand';
+
+            // Set URL font mode if font was specified in URL
+            isUrlFontMode = !!fontFromUrl;
+
+            if (isUrlFontMode) {
+                console.log('Loading font from URL parameters:', fontToLoad);
+            } else {
+                console.log('Loading default font:', fontToLoad);
+            }
+
+            await loadFont(fontToLoad);
+
+            // Disable font controls if in URL font mode
+            if (isUrlFontMode) {
+                const fontSelect = document.getElementById('fontSelect');
+                const fontWeight = document.getElementById('fontWeight');
+                const fontStyle = document.getElementById('fontStyle');
+
+                fontSelect.disabled = true;
+                fontWeight.disabled = true;
+                fontStyle.disabled = true;
+
+                // Add visual indication
+                fontSelect.style.opacity = '0.6';
+                fontWeight.style.opacity = '0.6';
+                fontStyle.style.opacity = '0.6';
+
+                fontSelect.title = 'Font locked from shared URL. Press ESC to exit fullscreen and unlock.';
+                fontWeight.title = 'Font weight locked from shared URL. Press ESC to exit fullscreen and unlock.';
+                fontStyle.title = 'Font style locked from shared URL. Press ESC to exit fullscreen and unlock.';
+
+                console.log('Font controls locked due to URL parameters. Font:', fontToLoad,
+                    'Weight:', document.getElementById('fontWeight').value,
+                    'Style:', document.getElementById('fontStyle').value);
+            }
 
             document.getElementById('startBtn').addEventListener('click', toggleAnimation);
             document.getElementById('lpmSlider').addEventListener('input', updateLPM);
@@ -1491,15 +1956,19 @@
             updateTickerLoop();
             updateImmediateFill();
             updateBackgroundImageUrl();
+
+            // Add wheel and touch scrolling support
+            setupScrollSupport();
         }
 
         function setInitialFontSize() {
             const isMobile = window.innerWidth <= 768 || window.innerHeight <= 768;
 
             if (isMobile) {
-                // Mobile default: 50px (scale 1.25)
+                // Mobile: Keep a reasonable default size that works well on all phones
+                // Don't make it too small automatically - let users control it
                 baseFontSize = 40;
-                document.getElementById('zoomSlider').value = '1.25';
+                document.getElementById('zoomSlider').value = '3.0'; // 120px - good readable size
                 document.getElementById('zoomSlider').min = '0.5';   // Min 20px
                 document.getElementById('zoomSlider').max = '10.0';  // Max 400px
             } else {
@@ -1509,6 +1978,105 @@
                 document.getElementById('zoomSlider').min = '0.5';   // Min 20px
                 document.getElementById('zoomSlider').max = '10.0';  // Max 400px
             }
+        }
+
+        function setupScrollSupport() {
+            // Mouse wheel scrolling support
+            canvas.addEventListener('wheel', function (e) {
+                // Only handle scrolling if we have text and animation is running
+                if (!letterData.length || !isAnimating) return;
+
+                e.preventDefault(); // Prevent page scrolling
+
+                const scrollSpeed = 30; // Adjust scroll sensitivity
+
+                if (layoutMode === 'wrap') {
+                    // Vertical scrolling in wrap mode
+                    if (e.deltaY !== 0) {
+                        manualScrollOffsetY += e.deltaY > 0 ? scrollSpeed : -scrollSpeed;
+
+                        // Calculate bounds for wrap mode scrolling
+                        const maxScrollY = Math.max(0, (currentLine + 1) * lineHeight - canvas.height + margin);
+                        manualScrollOffsetY = Math.max(-maxScrollY, Math.min(manualScrollOffsetY, maxScrollY));
+                    }
+                } else if (layoutMode === 'ticker') {
+                    // Horizontal scrolling in ticker mode
+                    if (e.deltaY !== 0 || e.deltaX !== 0) {
+                        const delta = e.deltaY !== 0 ? e.deltaY : e.deltaX;
+                        manualScrollOffsetX += delta > 0 ? scrollSpeed : -scrollSpeed;
+
+                        // No bounds for ticker mode - allow infinite scrolling
+                        // User can scroll to see past or future text
+                    }
+                }
+            }, { passive: false });
+
+            // Touch gesture support for mobile
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let lastTouchX = 0;
+            let lastTouchY = 0;
+            let isScrollingTouch = false;
+
+            canvas.addEventListener('touchstart', function (e) {
+                if (!letterData.length || !isAnimating) return;
+
+                const touch = e.touches[0];
+                touchStartX = touch.clientX;
+                touchStartY = touch.clientY;
+                lastTouchX = touch.clientX;
+                lastTouchY = touch.clientY;
+                isScrollingTouch = false;
+            }, { passive: true });
+
+            canvas.addEventListener('touchmove', function (e) {
+                if (!letterData.length || !isAnimating) return;
+
+                const touch = e.touches[0];
+                const deltaX = touch.clientX - lastTouchX;
+                const deltaY = touch.clientY - lastTouchY;
+
+                // Determine scroll direction on first significant movement
+                if (!isScrollingTouch) {
+                    const absDeltaX = Math.abs(deltaX);
+                    const absDeltaY = Math.abs(deltaY);
+
+                    if (absDeltaX > 10 || absDeltaY > 10) {
+                        isScrollingTouch = true;
+
+                        // Prevent default only if we're handling the scroll
+                        if ((layoutMode === 'wrap' && absDeltaY > absDeltaX) ||
+                            (layoutMode === 'ticker' && absDeltaX > absDeltaY)) {
+                            e.preventDefault();
+                        }
+                    }
+                }
+
+                if (isScrollingTouch) {
+                    const scrollSpeed = 2; // Touch scroll sensitivity
+
+                    if (layoutMode === 'wrap') {
+                        // Vertical scrolling in wrap mode (inverted for natural feel)
+                        manualScrollOffsetY -= deltaY * scrollSpeed;
+
+                        // Calculate bounds for wrap mode scrolling
+                        const maxScrollY = Math.max(0, (currentLine + 1) * lineHeight - canvas.height + margin);
+                        manualScrollOffsetY = Math.max(-maxScrollY, Math.min(manualScrollOffsetY, maxScrollY));
+                    } else if (layoutMode === 'ticker') {
+                        // Horizontal scrolling in ticker mode (inverted for natural feel)
+                        manualScrollOffsetX -= deltaX * scrollSpeed;
+
+                        // No bounds for ticker mode - allow infinite scrolling
+                    }
+                }
+
+                lastTouchX = touch.clientX;
+                lastTouchY = touch.clientY;
+            }, { passive: false });
+
+            canvas.addEventListener('touchend', function (e) {
+                isScrollingTouch = false;
+            }, { passive: true });
         }
 
         async function loadFont(fontName) {
@@ -1562,6 +2130,8 @@
                 wrapScrollOffset = 0;
                 tickerScrollOffset = 0;
                 lastScrollTime = 0;
+                manualScrollOffsetX = 0; // Reset manual scroll offsets
+                manualScrollOffsetY = 0;
                 currentLine = 0;
                 trailPoints = []; // Clear trail points
                 stopFlickerAnimation(); // Stop flicker animation if running
@@ -2266,6 +2836,8 @@
             wrapScrollOffset = 0;
             tickerScrollOffset = 0;
             lastScrollTime = 0;
+            manualScrollOffsetX = 0; // Reset manual scroll offsets
+            manualScrollOffsetY = 0;
 
             // Show/hide alignment controls based on layout mode
             const alignmentGroup = document.getElementById('textAlignment').parentElement;
@@ -2409,6 +2981,8 @@
             wrapScrollOffset = 0; // Reset wrap scroll offset
             tickerScrollOffset = 0; // Reset ticker scroll offset
             lastScrollTime = 0; // Reset scroll timing
+            manualScrollOffsetX = 0; // Reset manual scroll offsets
+            manualScrollOffsetY = 0;
             letterData = [];
             trailPoints = [];
 
@@ -2911,6 +3485,24 @@
         }
 
         async function changeFont() {
+            // Prevent font changes when in URL font mode (until ESC is pressed)
+            if (isUrlFontMode) {
+                console.log('Font changes are disabled in URL sharing mode. Press ESC to exit fullscreen and enable font changes.');
+                // Reset the font select to the current font to prevent UI confusion
+                const currentFontSelect = document.getElementById('fontSelect');
+                // Find the font name that's currently loaded
+                const fontOptions = currentFontSelect.options;
+                for (let i = 0; i < fontOptions.length; i++) {
+                    if (font && font.names && font.names.fontFamily &&
+                        font.names.fontFamily.en &&
+                        fontOptions[i].textContent.includes(font.names.fontFamily.en)) {
+                        currentFontSelect.selectedIndex = i;
+                        break;
+                    }
+                }
+                return;
+            }
+
             const fontName = document.getElementById('fontSelect').value;
             document.getElementById('startBtn').disabled = true;
             await loadFont(fontName);
@@ -3085,7 +3677,27 @@
             const detachedTextArea = document.getElementById('detachedTextArea');
 
             if (!isFullscreen) {
-                // Exited fullscreen
+                // Exited fullscreen - disable URL font mode to allow font changes
+                isUrlFontMode = false;
+
+                // Re-enable font controls
+                const fontSelect = document.getElementById('fontSelect');
+                const fontWeight = document.getElementById('fontWeight');
+                const fontStyle = document.getElementById('fontStyle');
+
+                fontSelect.disabled = false;
+                fontWeight.disabled = false;
+                fontStyle.disabled = false;
+
+                // Remove visual indication
+                fontSelect.style.opacity = '1';
+                fontWeight.style.opacity = '1';
+                fontStyle.style.opacity = '1';
+
+                fontSelect.title = '';
+                fontWeight.title = '';
+                fontStyle.title = '';
+
                 controls.style.display = 'flex';
                 document.getElementById('fullscreenSpeedSlider').classList.remove('show');
                 document.getElementById('fullscreenOnStart').checked = false;
@@ -3272,8 +3884,9 @@
                 updatePathJitterShape();
             }
             if (urlParams.has('font')) {
+                console.log('Font parameter found in URL:', urlParams.get('font'));
                 document.getElementById('fontSelect').value = urlParams.get('font');
-                changeFont();
+                // Don't call changeFont() here - let init() handle font loading
             }
             if (urlParams.has('colorMode')) {
                 document.getElementById('colorMode').value = urlParams.get('colorMode');
@@ -3311,10 +3924,12 @@
                 updateTextAlignment();
             }
             if (urlParams.has('fontWeight')) {
+                console.log('Font weight parameter found in URL:', urlParams.get('fontWeight'));
                 document.getElementById('fontWeight').value = urlParams.get('fontWeight');
                 updateFontWeight();
             }
             if (urlParams.has('fontStyle')) {
+                console.log('Font style parameter found in URL:', urlParams.get('fontStyle'));
                 document.getElementById('fontStyle').value = urlParams.get('fontStyle');
                 updateFontStyle();
             } if (urlParams.has('backgroundMode')) {
@@ -3863,9 +4478,13 @@
                         } else {
                             wrapScrollOffset = targetScrollY;
                         }
+
+                        lastAutoScrollTime = performance.now();
                     }
                 }
-                yScrollOffset = wrapScrollOffset;
+
+                // Combine automatic scrolling with manual scrolling
+                yScrollOffset = wrapScrollOffset + manualScrollOffsetY;
             } else if (layoutMode === 'ticker') {
                 // Smooth ticker scrolling - keep pen at fixed position, scroll text left continuously
                 let currentDrawingIndex = -1;
@@ -3915,9 +4534,13 @@
                     const progressOffset = letterProgress * currentLetterWidth * 0.8; // 80% of letter width for smooth transition
 
                     // Calculate scroll offset to keep writing position at target
-                    xScrollOffset = (baseX + progressOffset) - targetPenX;
+                    const autoScrollOffset = (baseX + progressOffset) - targetPenX;
+
+                    // Combine automatic scrolling with manual scrolling
+                    xScrollOffset = autoScrollOffset + manualScrollOffsetX;
                 } else {
-                    xScrollOffset = 0;
+                    // No active drawing, just use manual scroll offset
+                    xScrollOffset = manualScrollOffsetX;
                 }
             }
 
