@@ -40,7 +40,7 @@
 
         #controls {
             padding: 4px;
-            background: #002222;
+            background: #e8e6d0;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             display: flex;
             flex-direction: row;
@@ -69,49 +69,52 @@
         }
 
         .menu-label {
-            background: #003333;
-            color: #00aaaa;
+            background: #a5a587;
+            color: #2d2d1f;
             padding: 6px 10px;
             cursor: pointer;
             font-size: 0.8rem;
-            font-weight: bold;
+            font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            border: 1px solid #004444;
+            border: 1px solid #8b8b70;
             border-right: none;
             transition: all 0.2s ease;
             user-select: none;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
         }
 
         .menu-item:last-child .menu-label {
-            border-right: 1px solid #004444;
+            border-right: 1px solid #8b8b70;
         }
 
         .menu-label:hover {
-            background: #004444;
-            color: #00cccc;
+            background: #7a7a5f;
+            color: #1a1a10;
         }
 
         .menu-label.active {
-            background: #004444;
-            color: #00cccc;
+            background: #7a7a5f;
+            color: #1a1a10;
         }
 
         .dropdown-content {
             display: none;
             position: absolute;
-            background: #001a1a;
+            background: #f5f3e8;
             min-width: 300px;
             max-width: 400px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             z-index: 1000;
             top: 100%;
             left: 0;
-            border: 1px solid #333;
+            border: 1px solid #999;
             border-radius: 0 0 4px 4px;
             padding: 12px;
             max-height: 70vh;
             overflow-y: auto;
+            color: #2d2d1f;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
         }
 
         .dropdown-content.show {
@@ -131,34 +134,31 @@
             align-items: center;
             flex: 1;
             margin: 0 12px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
         }
 
         .main-inputs input,
         .main-inputs button {
             height: 30px;
             box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
         }
 
-        #textInput {
-            flex: 1;
-            min-width: 200px;
-            max-width: 300px;
-            padding: 6px 8px;
-            font-size: 0.9rem;
-            border: 1px solid #333;
-            border-radius: 4px;
-            background: #003333;
-            color: #fff;
+        .main-inputs label {
+            font-size: 0.85rem;
+            color: #3d3d2f;
+            font-weight: 500;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
         }
 
         #fromInput {
             width: 150px;
             padding: 6px 8px;
             font-size: 0.9rem;
-            border: 1px solid #333;
+            border: 1px solid #8b8b70;
             border-radius: 4px;
-            background: #003333;
-            color: #fff;
+            background: #f5f3e8;
+            color: #2d2d1f;
         }
 
         #startBtn,
@@ -166,23 +166,22 @@
             padding: 6px 12px;
             font-size: 0.9rem;
             cursor: pointer;
-            border: 1px solid #555;
+            border: 1px solid #8b8b70;
             border-radius: 4px;
             white-space: nowrap;
+            background: #a5a587;
+            color: #2d2d1f;
+            font-weight: 500;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        #startBtn {
-            background: #004444;
-            color: #fff;
-        }
-
-        #shareBtn {
-            background: #440044;
-            color: #fff;
-        }
-
+        #startBtn:hover,
         #shareBtn:hover {
-            background: #660066;
+            background: #7a7a5f;
+            color: #1a1a10;
         }
 
         /* Control styles within dropdowns */
@@ -200,45 +199,7 @@
             margin-bottom: 0;
         }
 
-        #textInput {
-            flex: 1;
-            min-width: 120px;
-            /* Reduced from 200px to prevent horizontal scrollbars */
-            max-width: 100%;
-            /* Prevent exceeding container width */
-            padding: 8px;
-            font-size: 1rem;
-            border: 1px solid #333;
-            border-radius: 4px;
-            background: #003333;
-            color: #fff;
-            box-sizing: border-box;
-            /* Include padding in width calculations */
-        }
 
-        #startBtn {
-            padding: 8px 16px;
-            font-size: 1rem;
-            cursor: pointer;
-            background: #004444;
-            color: #fff;
-            border: 1px solid #555;
-            border-radius: 4px;
-        }
-
-        #shareBtn {
-            padding: 8px 16px;
-            font-size: 1rem;
-            cursor: pointer;
-            background: #440044;
-            color: #fff;
-            border: 1px solid #555;
-            border-radius: 4px;
-        }
-
-        #shareBtn:hover {
-            background: #660066;
-        }
 
         .control-group {
             display: flex;
@@ -254,8 +215,10 @@
 
         .control-group label {
             font-size: 0.85rem;
-            color: #ccc;
+            color: #3d3d2f;
             white-space: nowrap;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            font-weight: 500;
         }
 
         .control-group input[type="range"] {
@@ -265,11 +228,12 @@
         .control-group select,
         .control-group input[type="color"] {
             padding: 3px;
-            background: #003333;
-            color: #fff;
-            border: 1px solid #333;
+            background: #fff;
+            color: #2d2d1f;
+            border: 1px solid #999;
             border-radius: 4px;
             font-size: 0.85rem;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
         }
 
         /* Gradient color inputs with click-to-toggle styling */
@@ -288,8 +252,9 @@
 
         .control-group span {
             font-size: 0.8rem;
-            color: #999;
+            color: #5d5d4f;
             min-width: 50px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
         }
 
         /* Music control buttons */
@@ -298,30 +263,34 @@
             padding: 4px 8px;
             font-size: 0.8rem;
             cursor: pointer;
-            background: #004444;
-            color: #fff;
-            border: 1px solid #555;
+            background: #a5a587;
+            color: #2d2d1f;
+            border: 1px solid #8b8b70;
             border-radius: 4px;
             margin-right: 4px;
+            text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            font-weight: 500;
         }
 
         #musicPlayPause:hover,
         #musicStop:hover {
-            background: #006666;
+            background: #7a7a5f;
+            color: #1a1a10;
         }
 
         #musicPlayPause:disabled,
         #musicStop:disabled {
-            background: #222;
-            color: #666;
+            background: #d5d3c8;
+            color: #8b8b70;
             cursor: not-allowed;
         }
 
         .jitter-group {
-            border: 1px solid #333;
+            border: 1px solid #999;
             border-radius: 4px;
             padding: 4px 8px;
-            background: #001a1a;
+            background: #eeeede;
         }
 
         #canvas {
@@ -393,10 +362,10 @@
 
         /* Enhanced gradient controls */
         #gradientControls {
-            border: 1px solid #333;
+            border: 1px solid #999;
             border-radius: 4px;
             padding: 4px 8px;
-            background: #001a1a;
+            background: #eeeede;
             flex-wrap: wrap;
             gap: 4px;
             max-width: 100%;
@@ -409,7 +378,7 @@
             width: 30px;
             height: 20px;
             padding: 0;
-            border: 1px solid #333;
+            border: 1px solid #999;
             border-radius: 2px;
         }
 
@@ -438,36 +407,25 @@
         #messageButton {
             padding: 20px 40px;
             font-size: 1.2rem;
-            background: #004444;
-            color: #fff;
-            border: 2px solid #006666;
+            background: #a5a587;
+            color: #2d2d1f;
+            border: 2px solid #8b8b70;
             border-radius: 8px;
             cursor: pointer;
             text-align: center;
             max-width: 80%;
             line-height: 1.4;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            font-weight: 500;
         }
 
         #messageButton:hover {
-            background: #006666;
-            border-color: #008888;
+            background: #7a7a5f;
+            border-color: #6a6a5a;
+            color: #1a1a10;
         }
 
-        #fromInput {
-            flex: 0 0 200px;
-            min-width: 120px;
-            /* Reduced from 150px to prevent horizontal scrollbars */
-            max-width: 200px;
-            /* Prevent exceeding preferred width */
-            padding: 8px;
-            font-size: 1rem;
-            border: 1px solid #333;
-            border-radius: 4px;
-            background: #003333;
-            color: #fff;
-            box-sizing: border-box;
-            /* Include padding in width calculations */
-        }
+
 
         /* Help button */
         #helpButton {
@@ -477,9 +435,9 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: #004444;
-            color: #fff;
-            border: 2px solid #006666;
+            background: #a5a587;
+            color: #2d2d1f;
+            border: 2px solid #8b8b70;
             font-size: 1.5rem;
             font-weight: bold;
             cursor: pointer;
@@ -489,11 +447,13 @@
             z-index: 1000;
             transition: all 0.3s ease;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
         }
 
         #helpButton:hover {
-            background: #006666;
-            border-color: #008888;
+            background: #7a7a5f;
+            border-color: #6a6a5a;
+            color: #1a1a10;
             transform: scale(1.1);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
         }
@@ -621,6 +581,150 @@
         #helpCloseButton:hover {
             background: #cc0000;
         }
+
+        /* Detached Text Input Area - Minimized and Inline */
+        #detachedTextArea {
+            position: fixed;
+            top: 4px;
+            right: 4px;
+            width: 200px;
+            height: 37px;
+            background: #f5f3e8;
+            border: 1px solid #8b8b70;
+            border-radius: 4px;
+            z-index: 1500;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        #detachedTextArea.expanded {
+            width: 400px;
+            height: 120px;
+            top: 60px;
+            right: 20px;
+            resize: both;
+            min-width: 250px;
+            min-height: 80px;
+            max-width: 90vw;
+            max-height: 50vh;
+            border: 2px solid #8b8b70;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .text-area-header {
+            background: #a5a587;
+            color: #2d2d1f;
+            padding: 6px 10px;
+            cursor: move;
+            font-size: 0.75rem;
+            font-weight: 500;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            border-bottom: 1px solid #8b8b70;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 25px;
+            box-sizing: border-box;
+        }
+
+        #detachedTextArea.expanded .text-area-header {
+            font-size: 0.8rem;
+            padding: 6px 10px;
+            height: 30px;
+        }
+
+        .text-area-content {
+            padding: 6px;
+            height: calc(100% - 25px);
+            box-sizing: border-box;
+            display: none;
+        }
+
+        #detachedTextArea.expanded .text-area-content {
+            display: block;
+            padding: 8px;
+            height: calc(100% - 30px);
+        }
+
+        #mainTextInput {
+            width: 100%;
+            height: 100%;
+            padding: 4px;
+            font-size: 0.85rem;
+            border: 1px solid #8b8b70;
+            border-radius: 4px;
+            background: #fff;
+            color: #2d2d1f;
+            resize: none;
+            font-family: inherit;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        #detachedTextArea.expanded #mainTextInput {
+            padding: 6px;
+            font-size: 0.9rem;
+        }
+
+        #textAreaToggle {
+            background: #7a7a5f;
+            color: #f5f3e8;
+            border: none;
+            border-radius: 3px;
+            width: 16px;
+            height: 16px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        #detachedTextArea.expanded #textAreaToggle {
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+        }
+
+        #textAreaToggle:hover {
+            background: #5a5a4a;
+        }
+
+        /* Hide text editor in fullscreen - comprehensive approach */
+        body:fullscreen #detachedTextArea,
+        body:-webkit-full-screen #detachedTextArea,
+        body:-moz-full-screen #detachedTextArea,
+        body:-ms-fullscreen #detachedTextArea,
+        :fullscreen #detachedTextArea,
+        :-webkit-full-screen #detachedTextArea,
+        :-moz-full-screen #detachedTextArea,
+        :-ms-fullscreen #detachedTextArea {
+            display: none !important;
+            z-index: -9999 !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        /* Hide all textarea and input elements in fullscreen except sliders and help button */
+        body:fullscreen textarea,
+        body:-webkit-full-screen textarea,
+        body:-moz-full-screen textarea,
+        body:-ms-fullscreen textarea,
+        :fullscreen textarea,
+        :-webkit-full-screen textarea,
+        :-moz-full-screen textarea,
+        :-ms-fullscreen textarea {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
     </style>
 </head>
 
@@ -628,8 +732,6 @@
     <div id="controls">
         <!-- Main inputs in header bar -->
         <div class="main-inputs">
-            <input id="textInput" placeholder="Paste text here or enter a URL..."
-                value="Watch the pen! Calm your mind! Zen Text by sickfiction@gmail.com" />
             <input id="fromInput" placeholder="From (your name/email)" />
             <button id="startBtn" disabled>Start</button>
             <button id="shareBtn">Share</button>
@@ -697,6 +799,12 @@
                                 <option value="wrap">Wrap</option>
                                 <option value="ticker">Ticker</option>
                             </select>
+                        </div>
+                        <div class="control-group">
+                            <label>
+                                <input type="checkbox" id="tickerLoop" checked />
+                                Loop Ticker
+                            </label>
                         </div>
                         <div class="control-group">
                             <label>Align:</label>
@@ -772,6 +880,12 @@
                             <label>
                                 <input type="checkbox" id="lineOffMode" />
                                 Dot Only
+                            </label>
+                        </div>
+                        <div class="control-group">
+                            <label>
+                                <input type="checkbox" id="immediateFill" />
+                                Immediate Fill
                             </label>
                         </div>
                         <div class="control-group">
@@ -941,6 +1055,21 @@
                             <input type="color" id="gradientColor6" value="#110022" />
                         </div>
                     </div>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label>Image/Video URL:</label>
+                            <input type="text" id="backgroundImageUrl"
+                                placeholder="Enter image/video URL (JPG, PNG, GIF, MP4, WEBM) or YouTube link (video will be muted)"
+                                style="width: 250px; padding: 4px; background: #f5f3e8; color: #2d2d1f; border: 1px solid #8b8b70; border-radius: 4px;" />
+                        </div>
+                    </div>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <small style="color: #888; font-size: 0.85em;">
+                                ℹ️ YouTube videos are auto-muted (browser policy). Use Music menu for audio.
+                            </small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1009,14 +1138,18 @@
                     <li><strong>Gradient:</strong> Create beautiful color transitions</li>
                     <li><strong>Color Cycling:</strong> Watch colors smoothly change over time</li>
                     <li><strong>Boomerang:</strong> Colors expand and contract from center like breathing</li>
+                    <li><strong>Image/Video Backgrounds:</strong> Use JPG, PNG, GIF, MP4, WEBM files or YouTube links as
+                        backgrounds</li>
+                    <li><strong>YouTube Videos:</strong> YouTube background videos will be muted (browser security
+                        policy). Use the Music menu for audio</li>
                     <li><strong>Gradient Colors:</strong> The first two colors are always active. Colors 3-6 start
                         disabled (grayed out)</li>
                     <li><strong>Enable Colors:</strong> Click on grayed out colors to enable them</li>
                     <li><strong>Change Colors:</strong> Click on active colors to pick new colors</li>
                     <li><strong>Disable Colors:</strong> Right-click on active colors to disable them</li>
                 </ul>
-                <div class="tip">🎨 Start with 2 colors, then click to add more gradient colors for complex effects!
-                </div>
+                <div class="tip">🎨 Start with 2 colors, then click to add more gradient colors for complex effects! For
+                    video backgrounds with audio, use direct MP4/WEBM links instead of YouTube.</div>
             </div>
 
             <div class="feature">
@@ -1041,6 +1174,8 @@
                 <ul>
                     <li><strong>Wrap Mode:</strong> Text flows like a book with multiple lines</li>
                     <li><strong>Ticker Mode:</strong> Text scrolls horizontally like a news ticker</li>
+                    <li><strong>Loop Ticker:</strong> When enabled, ticker mode automatically restarts when text scrolls
+                        off screen</li>
                     <li><strong>Alignment:</strong> Choose left, center, or right alignment</li>
                     <li><strong>Spacing:</strong> Adjust line and letter spacing for perfect readability</li>
                 </ul>
@@ -1075,6 +1210,18 @@
                 </a>
                 <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">Thank you for being awesome! 🌟</p>
             </div>
+        </div>
+    </div>
+
+    <!-- Detached Text Input Area - Minimized and Inline -->
+    <div id="detachedTextArea">
+        <div class="text-area-header">
+            <span>📝 Text</span>
+            <button id="textAreaToggle" title="Expand/Collapse">⚡</button>
+        </div>
+        <div class="text-area-content">
+            <textarea id="mainTextInput" placeholder="Paste text here or enter a URL...
+(Press Enter for line breaks)">Watch the pen! Calm your mind! Zen Text by sickfiction@gmail.com</textarea>
         </div>
     </div>
 
@@ -1130,6 +1277,16 @@
         let musicVolume = 0.5; // Default volume (50%)
         let musicLoop = true; // Default loop enabled
         let isPlaying = false; // Track play state
+
+        // Ticker loop variable
+        let tickerLoop = true; // Default ticker loop enabled
+
+        // Immediate fill variable
+        let immediateFill = false; // Default immediate fill disabled
+
+        // Background image/video variables
+        let backgroundImageUrl = ''; // Background image/video URL
+        let backgroundMedia = null; // Background media element (img or video)
 
         const pastelColors = [
             '#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9',
@@ -1246,6 +1403,61 @@
             document.getElementById('musicPlayPause').addEventListener('click', toggleMusicPlayPause);
             document.getElementById('musicStop').addEventListener('click', stopMusic);
 
+            // Ticker loop event listener
+            document.getElementById('tickerLoop').addEventListener('change', updateTickerLoop);
+
+            // Immediate fill event listener
+            document.getElementById('immediateFill').addEventListener('change', updateImmediateFill);
+
+            // Background image URL event listener
+            document.getElementById('backgroundImageUrl').addEventListener('input', updateBackgroundImageUrl);
+
+            // Detached Text Area functionality
+            const mainTextInput = document.getElementById('mainTextInput');
+            const detachedTextArea = document.getElementById('detachedTextArea');
+            const textAreaToggle = document.getElementById('textAreaToggle');
+            const textAreaHeader = document.querySelector('.text-area-header');
+
+            // Make text area draggable
+            let isDragging = false;
+            let dragOffsetX = 0;
+            let dragOffsetY = 0;
+
+            textAreaHeader.addEventListener('mousedown', function (e) {
+                if (e.target === textAreaToggle) return; // Don't drag when clicking toggle button
+                isDragging = true;
+                dragOffsetX = e.clientX - detachedTextArea.offsetLeft;
+                dragOffsetY = e.clientY - detachedTextArea.offsetTop;
+                document.addEventListener('mousemove', handleDrag);
+                document.addEventListener('mouseup', stopDrag);
+                e.preventDefault();
+            });
+
+            function handleDrag(e) {
+                if (!isDragging) return;
+                detachedTextArea.style.left = (e.clientX - dragOffsetX) + 'px';
+                detachedTextArea.style.top = (e.clientY - dragOffsetY) + 'px';
+            }
+
+            function stopDrag() {
+                isDragging = false;
+                document.removeEventListener('mousemove', handleDrag);
+                document.removeEventListener('mouseup', stopDrag);
+            }
+
+            // Toggle text area collapsed/expanded
+            textAreaToggle.addEventListener('click', function () {
+                detachedTextArea.classList.toggle('expanded');
+                const isExpanded = detachedTextArea.classList.contains('expanded');
+                textAreaToggle.textContent = isExpanded ? '✕' : '⚡';
+                textAreaToggle.title = isExpanded ? 'Collapse' : 'Expand';
+
+                if (isExpanded) {
+                    // Focus the textarea when expanded
+                    setTimeout(() => mainTextInput.focus(), 100);
+                }
+            });
+
             // Initialize dropdown menus
             initializeDropdownMenus();
 
@@ -1276,6 +1488,9 @@
             // Initialize music controls
             updateMusicVolume();
             updateMusicLoop();
+            updateTickerLoop();
+            updateImmediateFill();
+            updateBackgroundImageUrl();
         }
 
         function setInitialFontSize() {
@@ -1552,6 +1767,111 @@
             musicLoop = document.getElementById('musicLoop').checked;
             if (currentMusic) {
                 currentMusic.loop = musicLoop;
+            }
+        }
+
+        function updateTickerLoop() {
+            tickerLoop = document.getElementById('tickerLoop').checked;
+        }
+
+        function updateImmediateFill() {
+            immediateFill = document.getElementById('immediateFill').checked;
+        }
+
+        function updateBackgroundImageUrl() {
+            backgroundImageUrl = document.getElementById('backgroundImageUrl').value.trim();
+
+            // Remove existing background media
+            if (backgroundMedia) {
+                if (backgroundMedia.parentNode) {
+                    backgroundMedia.parentNode.removeChild(backgroundMedia);
+                }
+                backgroundMedia = null;
+            }
+
+            if (backgroundImageUrl) {
+                // Check if it's a YouTube URL
+                const youtubeMatch = backgroundImageUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+
+                if (youtubeMatch) {
+                    // Handle YouTube video
+                    const videoId = youtubeMatch[1];
+                    backgroundMedia = document.createElement('iframe');
+                    backgroundMedia.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0`;
+                    backgroundMedia.allow = 'autoplay; encrypted-media';
+                    backgroundMedia.style.border = 'none';
+
+                    // Style the iframe to replace CSS background
+                    backgroundMedia.style.position = 'fixed';
+                    backgroundMedia.style.top = '0';
+                    backgroundMedia.style.left = '0';
+                    backgroundMedia.style.width = '100%';
+                    backgroundMedia.style.height = '100%';
+                    backgroundMedia.style.zIndex = '-1';
+                    backgroundMedia.style.pointerEvents = 'none'; // Prevent interaction
+
+                    // Clear CSS background immediately for YouTube videos
+                    document.body.style.background = 'transparent';
+
+                    // Add to document body
+                    document.body.insertBefore(backgroundMedia, document.body.firstChild);
+                } else {
+                    // Determine if it's a video or image based on file extension
+                    const isVideo = /\.(mp4|webm|ogg|mov|avi)$/i.test(backgroundImageUrl);
+
+                    if (isVideo) {
+                        // Create video element
+                        backgroundMedia = document.createElement('video');
+                        backgroundMedia.src = backgroundImageUrl;
+                        backgroundMedia.autoplay = true;
+                        backgroundMedia.loop = true;
+                        backgroundMedia.muted = true; // Required for autoplay
+                        backgroundMedia.playsInline = true;
+                    } else {
+                        // Create image element
+                        backgroundMedia = document.createElement('img');
+                        backgroundMedia.src = backgroundImageUrl;
+                    }
+
+                    // Style the background media to replace CSS background
+                    backgroundMedia.style.position = 'fixed';
+                    backgroundMedia.style.top = '0';
+                    backgroundMedia.style.left = '0';
+                    backgroundMedia.style.width = '100%';
+                    backgroundMedia.style.height = '100%';
+                    backgroundMedia.style.objectFit = 'cover';
+                    backgroundMedia.style.zIndex = '-1';
+
+                    // Add error handling
+                    backgroundMedia.onerror = function () {
+                        console.error('Failed to load background media:', backgroundImageUrl);
+                        if (backgroundMedia && backgroundMedia.parentNode) {
+                            backgroundMedia.parentNode.removeChild(backgroundMedia);
+                        }
+                        backgroundMedia = null;
+                        // Restore CSS background when media fails
+                        updateBackgroundColor();
+                    };
+
+                    // On successful load, clear CSS background
+                    backgroundMedia.onload = backgroundMedia.onloadeddata = function () {
+                        // Clear CSS background when image/video loads successfully
+                        document.body.style.background = 'transparent';
+                    };
+
+                    // Add to document body
+                    document.body.insertBefore(backgroundMedia, document.body.firstChild);
+
+                    // For videos, try to play
+                    if (isVideo) {
+                        backgroundMedia.play().catch(function (error) {
+                            console.warn('Video autoplay failed:', error);
+                        });
+                    }
+                }
+            } else {
+                // No background image/video URL, restore CSS background
+                updateBackgroundColor();
             }
         }
 
@@ -1882,7 +2202,12 @@
 
                 backgroundValue = `radial-gradient(circle at center, ${colorStops.join(', ')})`;
             }
-            document.body.style.background = backgroundValue;
+
+            // Only apply CSS background if there's no background image/video URL
+            if (!backgroundImageUrl) {
+                document.body.style.background = backgroundValue;
+            }
+
             if (canvas) {
                 // Make canvas transparent to show body background gradient
                 canvas.style.background = 'transparent';
@@ -1953,6 +2278,7 @@
             // If we have text loaded, regenerate the paths with new layout
             if (letterData.length > 0) {
                 regenerateLetterPaths();
+                redrawCurrentState();
 
                 // Start ticker if needed
                 if (layoutMode === 'ticker') {
@@ -1967,6 +2293,7 @@
             // If we have text loaded, regenerate the paths with new alignment
             if (letterData.length > 0) {
                 regenerateLetterPaths();
+                redrawCurrentState();
             }
         }
 
@@ -1976,6 +2303,7 @@
             // If we have text loaded, regenerate the paths with new weight
             if (letterData.length > 0) {
                 regenerateLetterPaths();
+                redrawCurrentState();
             }
         }
 
@@ -1985,6 +2313,7 @@
             // If we have text loaded, regenerate the paths with new style
             if (letterData.length > 0) {
                 regenerateLetterPaths();
+                redrawCurrentState();
             }
         }
 
@@ -2045,7 +2374,7 @@
             return startX - scrollDistance;
         }
         async function startReveal() {
-            let text = document.getElementById('textInput').value.trim();
+            let text = document.getElementById('mainTextInput').value.trim();
             if (!text) {
                 console.log('No text to reveal - returning early');
                 return;
@@ -2061,6 +2390,9 @@
 
             // Stop flicker animation during main animation
             stopFlickerAnimation();
+
+            // Stop continuous jitter animation during main animation
+            stopContinuousJitterAnimation();
 
             // Check if fullscreen on start is enabled
             const fullscreenOnStart = document.getElementById('fullscreenOnStart').checked; if (fullscreenOnStart) {
@@ -2106,7 +2438,8 @@
                     return;
                 }
             }            // Pre-calculate word wrapping with current font and canvas size
-            const words = text.split(/\s+/);
+            // First handle explicit line breaks, then split words
+            const textLines = text.split(/\r?\n/); // Split on line breaks first
             let layoutText = '';
             let x = margin;
             let y = baselineY;
@@ -2119,29 +2452,48 @@
             lineHeight = fontSize * (baseSpacing / 300); console.log('Text layout - Canvas:', canvas.width, 'x', canvas.height, 'Font size:', fontSize, 'Line height:', lineHeight);
 
             if (layoutMode === 'ticker') {
-                // Ticker mode: Never wrap, keep all text on single line
-                layoutText = text; // Use original text without any wrapping
+                // Ticker mode: Never wrap, keep all text on single line, join lines with spaces
+                layoutText = textLines.join(' ');
             } else {
-                // Wrap mode: Calculate word wrapping
-                for (let word of words) {
-                    // Calculate word width
-                    let wordWidth = 0;
-                    for (let char of word) {
-                        const glyph = font.charToGlyph(char) || font.charToGlyph(' ');
-                        wordWidth += glyph.advanceWidth * (fontSize / font.unitsPerEm) * letterSpacing;
-                    }
+                // Wrap mode: Process each line separately, respecting explicit line breaks
+                for (let lineIndex = 0; lineIndex < textLines.length; lineIndex++) {
+                    const line = textLines[lineIndex];
+                    const words = line.split(/\s+/).filter(word => word.length > 0);
 
-                    // Check if word fits on current line
-                    if (x + wordWidth > canvas.width - margin && x > margin) {
-                        // Move to next line
+                    // If this is not the first line, force a line break
+                    if (lineIndex > 0) {
+                        // Force line break by moving to next line
                         x = margin;
                         y += lineHeight;
                         currentLine++;
+                        layoutText += '\n'; // Add explicit line break marker
                     }
 
-                    // Add word to layout
-                    layoutText += word + ' ';
-                    x += wordWidth + (font.charToGlyph(' ').advanceWidth * (fontSize / font.unitsPerEm) * letterSpacing);
+                    // Process words in this line
+                    for (let word of words) {
+                        // Calculate word width
+                        let wordWidth = 0;
+                        for (let char of word) {
+                            const glyph = font.charToGlyph(char) || font.charToGlyph(' ');
+                            wordWidth += glyph.advanceWidth * (fontSize / font.unitsPerEm) * letterSpacing;
+                        }
+
+                        // Check if word fits on current line (but not if we just started a new explicit line)
+                        if (x + wordWidth > canvas.width - margin && x > margin) {
+                            // Move to next line
+                            x = margin;
+                            y += lineHeight;
+                            currentLine++;
+                            layoutText += '\n'; // Add line break marker
+                        }
+
+                        // Add word to layout
+                        layoutText += word;
+                        if (word !== words[words.length - 1] || lineIndex < textLines.length - 1) {
+                            layoutText += ' ';
+                        }
+                        x += wordWidth + (font.charToGlyph(' ').advanceWidth * (fontSize / font.unitsPerEm) * letterSpacing);
+                    }
                 }
             }            // Precalculate line widths and starting positions for alignment
             const lines = [];
@@ -2153,6 +2505,24 @@
             let tempX = margin;
             for (let i = 0; i < layoutText.length; i++) {
                 const ch = layoutText[i];
+
+                // Handle explicit line breaks
+                if (ch === '\n') {
+                    // End current line
+                    lines.push({
+                        chars: currentLineChars,
+                        width: currentLineWidth,
+                        lineIndex: lineIndex
+                    });
+
+                    // Start new line
+                    currentLineChars = [];
+                    currentLineWidth = 0;
+                    tempX = margin;
+                    lineIndex++;
+                    continue; // Skip processing the \n character
+                }
+
                 const glyph = font.charToGlyph(ch) || font.charToGlyph(' ');
                 const w = glyph.advanceWidth * (fontSize / font.unitsPerEm) * letterSpacing;
 
@@ -2160,7 +2530,7 @@
                 if (layoutMode !== 'ticker' && ch === ' ') {
                     // Look ahead to see if next word fits
                     let nextWordEnd = i + 1;
-                    while (nextWordEnd < layoutText.length && layoutText[nextWordEnd] !== ' ') {
+                    while (nextWordEnd < layoutText.length && layoutText[nextWordEnd] !== ' ' && layoutText[nextWordEnd] !== '\n') {
                         nextWordEnd++;
                     }
 
@@ -2251,14 +2621,27 @@
             for (let i = 0; i < layoutText.length; i++) {
                 const ch = layoutText[i];
 
-                // Check if we've moved to a new line
+                // Handle explicit line breaks
+                if (ch === '\n') {
+                    currentLine++;
+                    if (currentLine < lines.length) {
+                        currentLineData = lines[currentLine];
+                        charIndexInLine = 0;
+                        extraSpaceAccumulated = 0;
+                        x = currentLineData.startX; // Apply alignment for new line
+                        y += lineHeight;
+                    }
+                    continue; // Skip processing the \n character
+                }
+
+                // Check if we've moved to a new line (automatic wrapping)
                 if (currentLineData && charIndexInLine >= currentLineData.chars.length) {
                     currentLine++;
                     if (currentLine < lines.length) {
                         currentLineData = lines[currentLine];
                         charIndexInLine = 0;
                         extraSpaceAccumulated = 0;
-                        x = currentLineData.startX;
+                        x = currentLineData.startX; // Apply alignment for new line
                         y += lineHeight;
                     }
                 }
@@ -2366,6 +2749,9 @@
 
                     // Start flicker animation if enabled
                     startFlickerAnimation();
+
+                    // Start continuous jitter animation if jitter is enabled
+                    startContinuousJitterAnimation();
                     return;
                 } const currentLetter = letterData[currentLetterIndex];
                 if (!currentLetter.revealed) {
@@ -2377,16 +2763,9 @@
                 }// Handle letters (including spaces) progressively
                 if (currentLetter.pts && currentLetter.pts.length > 0) {
                     // Letter with actual drawing points
-                    // Use current lettersPerMinute value for real-time speed updates
-                    const currentPointsPerFrame = Math.max(1, Math.floor(lettersPerMinute / 60));
-                    const targetPoints = Math.min(
-                        currentLetter.currentPointIndex + currentPointsPerFrame,
-                        currentLetter.pts.length
-                    );
-
-                    // Advance the drawing
-                    currentLetter.currentPointIndex = targetPoints;                    // Check if current letter is complete
-                    if (currentLetter.currentPointIndex >= currentLetter.pts.length) {
+                    if (immediateFill) {
+                        // Immediate fill: complete the entire letter instantly
+                        currentLetter.currentPointIndex = currentLetter.pts.length;
                         currentLetter.drawingComplete = true;
                         currentLetterIndex++;
 
@@ -2397,29 +2776,71 @@
                             return;
                         }
 
-                        // Continue jitter animation during delay between letters (wrap mode only)
+                        // Add minimal delay for immediate fill in wrap mode
+                        const immediateDelayFrames = Math.max(1, Math.floor((60000 / lettersPerMinute / 8) / 16)); // Shorter delay
                         let delayFrameCount = 0;
-                        // Use current lettersPerMinute for delay calculation
-                        const totalDelayFrames = Math.max(1, Math.floor((60000 / lettersPerMinute / 4) / 16)); // ~16ms per frame
 
-                        function delayWithJitter() {
-                            if (!isAnimating) return; // Stop if animation was cancelled
+                        function immediateDelayWithJitter() {
+                            if (!isAnimating) return;
 
-                            redrawCurrentState(); // Keep jitter going during delay
+                            redrawCurrentState();
                             delayFrameCount++;
 
-                            if (delayFrameCount >= totalDelayFrames) {
-                                // Delay complete, continue with next letter
+                            if (delayFrameCount >= immediateDelayFrames) {
                                 animationFrameId = requestAnimationFrame(animateDrawing);
                             } else {
-                                // Continue delay with jitter
-                                animationFrameId = requestAnimationFrame(delayWithJitter);
+                                animationFrameId = requestAnimationFrame(immediateDelayWithJitter);
                             }
                         }
 
-                        // Start the delay with continued jitter
-                        animationFrameId = requestAnimationFrame(delayWithJitter);
+                        animationFrameId = requestAnimationFrame(immediateDelayWithJitter);
                         return;
+                    } else {
+                        // Progressive fill: draw letter progressively
+                        // Use current lettersPerMinute value for real-time speed updates
+                        const currentPointsPerFrame = Math.max(1, Math.floor(lettersPerMinute / 60));
+                        const targetPoints = Math.min(
+                            currentLetter.currentPointIndex + currentPointsPerFrame,
+                            currentLetter.pts.length
+                        );
+
+                        // Advance the drawing
+                        currentLetter.currentPointIndex = targetPoints;                    // Check if current letter is complete
+                        if (currentLetter.currentPointIndex >= currentLetter.pts.length) {
+                            currentLetter.drawingComplete = true;
+                            currentLetterIndex++;
+
+                            // Skip delay in ticker mode for continuous motion
+                            if (layoutMode === 'ticker') {
+                                // Continue immediately in ticker mode for smooth scrolling
+                                animationFrameId = requestAnimationFrame(animateDrawing);
+                                return;
+                            }
+
+                            // Continue jitter animation during delay between letters (wrap mode only)
+                            let delayFrameCount = 0;
+                            // Use current lettersPerMinute for delay calculation
+                            const totalDelayFrames = Math.max(1, Math.floor((60000 / lettersPerMinute / 4) / 16)); // ~16ms per frame
+
+                            function delayWithJitter() {
+                                if (!isAnimating) return; // Stop if animation was cancelled
+
+                                redrawCurrentState(); // Keep jitter going during delay
+                                delayFrameCount++;
+
+                                if (delayFrameCount >= totalDelayFrames) {
+                                    // Delay complete, continue with next letter
+                                    animationFrameId = requestAnimationFrame(animateDrawing);
+                                } else {
+                                    // Continue delay with jitter
+                                    animationFrameId = requestAnimationFrame(delayWithJitter);
+                                }
+                            }
+
+                            // Start the delay with continued jitter
+                            animationFrameId = requestAnimationFrame(delayWithJitter);
+                            return;
+                        }
                     }
                 } else {
                     // Space or character with no points - mark as complete and move to next immediately
@@ -2439,6 +2860,7 @@
 
         // Flicker animation loop
         let flickerAnimationId = null;
+        let continuousJitterAnimationId = null;
 
         function startFlickerAnimation() {
             if (flickerAnimationId) return; // Already running
@@ -2457,6 +2879,23 @@
             }
         }
 
+        function startContinuousJitterAnimation() {
+            if (continuousJitterAnimationId) return; // Already running
+
+            function jitterLoop() {
+                if (letterData.length > 0 && !isAnimating && jitterAmount > 0) {
+                    redrawCurrentState();
+                    continuousJitterAnimationId = requestAnimationFrame(jitterLoop);
+                } else {
+                    continuousJitterAnimationId = null;
+                }
+            }
+
+            if (jitterAmount > 0) {
+                continuousJitterAnimationId = requestAnimationFrame(jitterLoop);
+            }
+        }
+
         function stopFlickerAnimation() {
             if (flickerAnimationId) {
                 cancelAnimationFrame(flickerAnimationId);
@@ -2464,11 +2903,28 @@
             }
         }
 
+        function stopContinuousJitterAnimation() {
+            if (continuousJitterAnimationId) {
+                cancelAnimationFrame(continuousJitterAnimationId);
+                continuousJitterAnimationId = null;
+            }
+        }
+
         async function changeFont() {
             const fontName = document.getElementById('fontSelect').value;
             document.getElementById('startBtn').disabled = true;
             await loadFont(fontName);
-        } function toggleColorMode() {
+
+            // Regenerate paths and redraw immediately to show changes
+            if (letterData.length > 0) {
+                regenerateLetterPaths();
+                redrawCurrentState();
+            }
+
+            document.getElementById('startBtn').disabled = false;
+        }
+
+        function toggleColorMode() {
             const mode = document.getElementById('colorMode').value;
             const singleColor = document.getElementById('singleColor');
             singleColor.style.display = mode === 'single' ? 'inline' : 'none';
@@ -2626,6 +3082,7 @@
                 document.mozFullScreenElement || document.msFullscreenElement);
 
             const controls = document.getElementById('controls');
+            const detachedTextArea = document.getElementById('detachedTextArea');
 
             if (!isFullscreen) {
                 // Exited fullscreen
@@ -2633,13 +3090,42 @@
                 document.getElementById('fullscreenSpeedSlider').classList.remove('show');
                 document.getElementById('fullscreenOnStart').checked = false;
 
+                // Show the detached text area again
+                if (detachedTextArea) {
+                    detachedTextArea.style.display = '';
+                    detachedTextArea.style.visibility = '';
+                    detachedTextArea.style.opacity = '';
+                    detachedTextArea.style.zIndex = '';
+                    detachedTextArea.style.pointerEvents = '';
+                }
+
+                // Apply background (image/video takes precedence over CSS background)
+                if (backgroundImageUrl) {
+                    updateBackgroundImageUrl();
+                } else {
+                    updateBackgroundColor();
+                }
+
                 onResize();
             } else {
                 // Entered fullscreen
                 document.getElementById('fullscreenSpeedSlider').classList.add('show');
 
-                // Apply gradient background immediately
-                updateBackgroundColor();
+                // Completely hide the detached text area in fullscreen
+                if (detachedTextArea) {
+                    detachedTextArea.style.display = 'none';
+                    detachedTextArea.style.visibility = 'hidden';
+                    detachedTextArea.style.opacity = '0';
+                    detachedTextArea.style.zIndex = '-9999';
+                    detachedTextArea.style.pointerEvents = 'none';
+                }
+
+                // Apply background (image/video or gradient) immediately
+                if (backgroundImageUrl) {
+                    updateBackgroundImageUrl();
+                } else {
+                    updateBackgroundColor();
+                }
             }
         }
 
@@ -2701,7 +3187,11 @@
 
             // Force background update after resize
             setTimeout(() => {
-                updateBackgroundColor();
+                if (backgroundImageUrl) {
+                    updateBackgroundImageUrl();
+                } else {
+                    updateBackgroundColor();
+                }
             }, 100);
 
             // Only reset animation state if we're not currently animating
@@ -2724,7 +3214,7 @@
             const hash = window.location.hash.substring(1);
             if (hash) {
                 // Decrypt and set text input from hash
-                document.getElementById('textInput').value = decryptMessage(hash);
+                document.getElementById('mainTextInput').value = decryptMessage(hash);
             }
         });
 
@@ -2733,7 +3223,7 @@
 
             // Parse and apply all settings
             if (urlParams.has('text')) {
-                document.getElementById('textInput').value = decryptMessage(urlParams.get('text'));
+                document.getElementById('mainTextInput').value = decryptMessage(urlParams.get('text'));
             }
             if (urlParams.has('from')) {
                 document.getElementById('fromInput').value = decryptMessage(urlParams.get('from'));
@@ -2811,6 +3301,10 @@
             if (urlParams.has('layoutMode')) {
                 document.getElementById('layoutMode').value = urlParams.get('layoutMode');
                 updateLayoutMode();
+            }
+            if (urlParams.has('tickerLoop')) {
+                document.getElementById('tickerLoop').checked = urlParams.get('tickerLoop') === 'true';
+                updateTickerLoop();
             }
             if (urlParams.has('textAlignment')) {
                 document.getElementById('textAlignment').value = urlParams.get('textAlignment');
@@ -2898,12 +3392,27 @@
                 updateMusicLoop();
             }
 
+            // Parse immediate fill setting
+            if (urlParams.has('immediateFill')) {
+                document.getElementById('immediateFill').checked = urlParams.get('immediateFill') === 'true';
+                updateImmediateFill();
+            }
+
+            // Parse background image URL
+            if (urlParams.has('backgroundImageUrl')) {
+                document.getElementById('backgroundImageUrl').value = urlParams.get('backgroundImageUrl');
+                updateBackgroundImageUrl();
+            }
+
             // Update gradient color visibility first, then background color after ALL parameters are loaded
             updateGradientColorVisibility();
             updateBackgroundColor();
 
             // Auto-start if autoplay parameter is present
             if (urlParams.has('autoplay') && urlParams.get('autoplay') === 'true') {
+                // Force fullscreen checkbox to be checked for shared links
+                document.getElementById('fullscreenOnStart').checked = true;
+
                 // Show message overlay for shared messages
                 const messageOverlay = document.getElementById('messageOverlay');
                 const messageButton = document.getElementById('messageButton');
@@ -2932,19 +3441,22 @@
         // Function to parse all settings for sharing
         function parseAllSettings() {
             return {
-                text: encryptMessage(document.getElementById('textInput').value),
+                text: encryptMessage(document.getElementById('mainTextInput').value),
                 from: encryptMessage(document.getElementById('fromInput').value),
                 lpm: document.getElementById('lpmSlider').value,
                 scale: document.getElementById('zoomSlider').value,
                 lineOff: document.getElementById('lineOffMode').checked,
                 trail: document.getElementById('trailSlider').value,
-                dotSize: document.getElementById('dotSizeSlider').value, jitter: document.getElementById('jitterSlider').value,
+                dotSize: document.getElementById('dotSizeSlider').value,
+                jitter: document.getElementById('jitterSlider').value,
                 jitterFreq: document.getElementById('jitterFreqSlider').value,
                 jitterShape: document.getElementById('jitterShape').value,
                 pathJitter: document.getElementById('pathJitterSlider').value,
                 pathJitterFreq: document.getElementById('pathJitterFreqSlider').value,
                 pathJitterShape: document.getElementById('pathJitterShape').value,
                 font: document.getElementById('fontSelect').value,
+                fontWeight: document.getElementById('fontWeight').value,
+                fontStyle: document.getElementById('fontStyle').value,
                 colorMode: document.getElementById('colorMode').value,
                 singleColor: document.getElementById('singleColor').value,
                 glow: document.getElementById('glowSlider').value,
@@ -2952,9 +3464,9 @@
                 lineSpacing: document.getElementById('lineSpacingSlider').value,
                 letterSpacing: document.getElementById('letterSpacingSlider').value,
                 layoutMode: document.getElementById('layoutMode').value,
+                tickerLoop: document.getElementById('tickerLoop').checked,
                 textAlignment: document.getElementById('textAlignment').value,
-                fontWeight: document.getElementById('fontWeight').value,
-                fontStyle: document.getElementById('fontStyle').value, backgroundMode: document.getElementById('backgroundMode').value,
+                backgroundMode: document.getElementById('backgroundMode').value,
                 backgroundColor: document.getElementById('backgroundColor').value,
                 gradientAngle: document.getElementById('gradientAngle').value,
                 gradientColor1: document.getElementById('gradientColor1').value,
@@ -2972,11 +3484,15 @@
                 gradientColor6Enabled: document.getElementById('gradientColor6').getAttribute('data-enabled') || 'false',
                 fillMode: document.getElementById('fillMode').value,
                 fillColor: document.getElementById('fillColor').value,
-                fullscreenOnStart: document.getElementById('fullscreenOnStart').checked,
+                fullscreenOnStart: 'true', // Always force fullscreen for shared links
                 // Add music settings
                 musicSelect: document.getElementById('musicSelect').value,
                 musicVolume: document.getElementById('musicVolume').value,
                 musicLoop: document.getElementById('musicLoop').checked,
+                // Add immediate fill setting
+                immediateFill: document.getElementById('immediateFill').checked,
+                // Add background image URL
+                backgroundImageUrl: document.getElementById('backgroundImageUrl').value,
                 autoplay: 'true'
             };
         }
@@ -2990,6 +3506,7 @@
             // If we have text loaded, regenerate the paths with new zoom
             if (letterData.length > 0) {
                 regenerateLetterPaths();
+                redrawCurrentState();
             }
         }
 
@@ -2997,6 +3514,11 @@
             const value = document.getElementById('glowSlider').value;
             glowIntensity = parseInt(value);
             document.getElementById('glowValue').textContent = value + '%';
+
+            // Immediate visual update
+            if (letterData.length > 0 && !isAnimating) {
+                redrawCurrentState();
+            }
         }
 
         function updateFlicker() {
@@ -3619,6 +4141,14 @@
                 }
                 tickerLastTime = currentTime;
 
+                // Loop logic: if text has fully scrolled off left and loop is enabled, restart
+                if (tickerLoop) {
+                    const totalTextWidth = getTotalTickerTextWidth();
+                    if (tickerScrollOffset > totalTextWidth + canvas.width) {
+                        tickerScrollOffset = 0;
+                    }
+                }
+
                 redrawCurrentState();
                 tickerAnimationId = requestAnimationFrame(tickerAnimationLoop);
             } else if (layoutMode !== 'ticker' && hasActiveFillAnimations()) {
@@ -3629,6 +4159,22 @@
                 tickerAnimationId = null;
                 tickerLastTime = 0;
             }
+        }
+
+        // Helper function to calculate total ticker text width
+        function getTotalTickerTextWidth() {
+            if (!letterData || letterData.length === 0) return 0;
+            let totalWidth = 0;
+            for (let i = 0; i < letterData.length; i++) {
+                if (letterData[i].width) {
+                    totalWidth += letterData[i].width;
+                }
+                // Add letter spacing between characters
+                if (i < letterData.length - 1) {
+                    totalWidth += (fontSize * letterSpacing * 0.2);
+                }
+            }
+            return totalWidth;
         }
         // Start ticker animation when layout mode changes to ticker
         function startTickerIfNeeded() {
